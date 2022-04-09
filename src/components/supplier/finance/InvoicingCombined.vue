@@ -25,6 +25,13 @@
                 <span>{{scope.row.hongProject}}</span>
               </template>
             </el-table-column>
+
+            <el-table-column prop="unitPrice" label="单价">
+              <template slot-scope="scope">
+                <span>{{scope.row.unitPrice}}</span>
+              </template>
+            </el-table-column>
+
             <el-table-column prop="notOutInvoiceNumber" label="数量">
               <template slot-scope="scope">
                 <span>{{scope.row.notOutInvoiceNumber}}</span>
@@ -35,6 +42,19 @@
                 <el-input size="small" v-model="scope.row.aggregateAmount"/>
               </template>
             </el-table-column>
+
+            <el-table-column prop="taxAmount" label="税额">
+              <template slot-scope="scope">
+                <el-input size="small" v-model="scope.row.taxAmount"/>
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="totalAmount" label="税额">
+              <template slot-scope="scope">
+                <el-input size="small" v-model="scope.row.totalAmount"/>
+              </template>
+            </el-table-column>
+
           </el-table>
         </el-form-item>
       </el-form>
@@ -65,7 +85,7 @@ export default {
   },
   created() {
     this.combinedTicket.combinedTicket.forEach(item => {
-      this.form.model.splitData.push({purchaseOrder: item.purchaseOrder,material:item.material,hongProject:item.hongProject,notOutInvoiceNumber:item.notOutInvoiceNumber,aggregateAmount:'',supplierCode:this.$store.state.user.username})
+      this.form.model.splitData.push({unitPrice:item.unitPrice,purchaseOrder: item.purchaseOrder,material:item.material,hongProject:item.hongProject,notOutInvoiceNumber:item.notOutInvoiceNumber,aggregateAmount:'',taxAmount:'',totalAmount:'',supplierCode:this.$store.state.user.username})
     })
   },
   methods:{

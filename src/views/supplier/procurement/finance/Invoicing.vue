@@ -38,26 +38,28 @@
                 :data="tableUtil.table.tableData"
                 ref="multipleTable"
                 :row-key="getRowId"
-                style="width:100%">
-        <el-table-column v-if="type === 1" type="selection" :reserve-selection="true" width="55"/>
-        <el-table-column type="index" width="50"/>
-        <el-table-column prop="supplierCode" v-if="this.$store.state.user.type !== 1" label="供应商编码" width="150"/>
-        <el-table-column prop="material" label="物料" width="100"/>
-        <el-table-column prop="materialDescribe" label="物料描述" width="130"/>
-        <el-table-column prop="purchaseOrder" label="采购订单" width="100"/>
+                style="width:100%"
+                @row-click="clickData">
+<!--        <el-table-column v-if="type === 1" type="selection" :reserve-selection="true" width="55"/>-->
+        <el-table-column :selectable="checkFreezeNum"  type="selection" :reserve-selection="true" width="55"></el-table-column>
+<!--        <el-table-column type="index" width="50"/>-->
+<!--     <el-table-column prop="supplierCode" v-if="this.$store.state.user.type !== 1" label="供应商编码" width="150"/>-->
+        <el-table-column prop="supplierCode" label="供应商编码" width="100"/>
+        <el-table-column prop="supplierName" label="供应商名称" width="130"/>
+        <el-table-column prop="material" label="物料号" width="100"/>
+        <el-table-column prop="materialName" label="物料名称"/>
+        <el-table-column prop="purchaseOrder" label="采购订单" width="130"/>
         <el-table-column prop="hongProject" label="行项目"/>
-        <el-table-column prop="plant" label="工厂" width="130"/>
+        <el-table-column prop="plant" label="工厂"/>
         <el-table-column prop="materialVoucher" label="物料凭证"/>
         <el-table-column prop="voucherProject" label="凭证项目"/>
-        <el-table-column prop="unitPrice" label="单价"/>
-        <el-table-column prop="quantity" label="数量"/>
-        <el-table-column prop="aggregateAmount" label="总金额"/>
         <el-table-column prop="notOutInvoiceNumber" label="未开票数量" width="90"/>
-        <el-table-column prop="status" label="状态">
-          <template slot-scope="scope">
-            {{scope.row.status === -1 ? "未开票" : (scope.row.status === 0 ? "已开票" : "")}}
-          </template>
-        </el-table-column>
+        <el-table-column prop="freezeNumber" label="冻结数量"/>
+<!--        <el-table-column prop="status" label="状态">-->
+<!--          <template slot-scope="scope">-->
+<!--            {{scope.row.status === -1 ? "未开票" : (scope.row.status === 0 ? "已开票" : "")}}-->
+<!--          </template>-->
+<!--        </el-table-column>-->
       </el-table>
     </div>
     <!--  Pagination  -->
@@ -111,6 +113,17 @@ export default {
     },
     doSearch() {
       this.tableUtil.initTable()
+    },
+    clickData(row, event, column){
+      console.log(event,column)
+      if (row.freezeNumber!==0){
+        alert("冻结数量不为0！请联系管理员")
+      }
+    },
+    // Freezenumber为0才可选
+    checkFreezeNum (row, index){
+      console.log(index)
+      return row.freezeNumber===0;
     },
     // changeTime(){
     //   if (this.value1 !== null){
@@ -224,9 +237,6 @@ export default {
 </script>
 
 <style scoped>
-.jz-upload {
-  margin-bottom: 10px;
-}
 
 .jz-upload > a {
   height: 30px;
@@ -263,7 +273,4 @@ export default {
   border: none;
 }
 
-.jz-import {
-  margin: -11px 10px;
-}
 </style>
