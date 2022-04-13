@@ -6,17 +6,16 @@
         <el-input class="jz-input" size="mini" clearable v-if="this.$store.state.user.type !== 1" v-model="tableUtil.filter.supplierCode" placeholder="供应商编码"/>
 <!--        <el-input class="jz-input" size="mini" clearable v-model="tableUtil.filter.status" placeholder="发票状态"/>-->
         <el-select size="mini" clearable v-model="tableUtil.filter.invoiceStatus" placeholder="请选择发票状态">
-          <el-option label="暂存" value="0"></el-option>
+          <el-option label="已暂存" value="0"></el-option>
           <el-option label="已提交" value="1"></el-option>
-          <el-option label="已维护" value="2"></el-option>
-          <el-option label="已挂账" value="3"></el-option>
+          <el-option label="已挂账" value="2"></el-option>
         </el-select>
         <el-select size="mini" clearable v-model="tableUtil.filter.invoiceType" placeholder="请选择发票类型">
           <el-option label="标准物资发票" value="0"></el-option>
           <el-option label="返利红字发票" value="1"></el-option>
         </el-select>
-        <el-input class="jz-input" size="mini" clearable v-model="tableUtil.filter.interimInvoiceNumber"
-                  placeholder="临时发票号"/>
+<!--        <el-input class="jz-input" size="mini" clearable v-model="tableUtil.filter.interimInvoiceNumber"-->
+<!--                  placeholder="临时发票号"/>-->
         <el-input class="jz-input" size="mini" clearable v-model="tableUtil.filter.invoiceNumber" placeholder="发票号"/>
         <el-date-picker
           size="mini"
@@ -38,34 +37,40 @@
                 style="width:100%">
         <el-table-column type="index" width="50"/>
         <el-table-column prop="supplierCode" v-if="this.$store.state.user.type !== 1" label="供应商编码" width="150"/>
-        <el-table-column prop="interimInvoiceNumber" label="临时发票号"/>
-        <el-table-column prop="invoiceNumber" label="发票号"/>
+<!--        <el-table-column prop="interimInvoiceNumber" label="临时发票号"/>-->
+        <el-table-column prop="supplierCode" label="供应商编码"/>
+        <el-table-column prop="supplierName" label="供应商名称"/>
+        <el-table-column prop="invoiceCode" label="发票代码"/>
+        <el-table-column prop="invoiceNumber" label="发票号码"/>
         <el-table-column prop="invoiceDate" label="发票日期"/>
-        <el-table-column prop="aggregateAmount" label="不含税总金额"/>
-        <el-table-column prop="taxPriceTotal" label="税价合计"/>
+        <el-table-column prop="withoutTaxAmount" label="不含税金额"/>
+        <el-table-column prop="taxAmount" label="税额"/>
+        <el-table-column prop="taxRate" label="税率"/>
+        <el-table-column prop="totalAmount" label="税价合计"/>
         <el-table-column prop="invoiceStatus" label="状态">
           <template slot-scope="scope">
-            {{scope.row.invoiceStatus === 0 ? "暂存" : (scope.row.invoiceStatus === 1 ? "已提交" : (scope.row.invoiceStatus === 2 ? "已维护" : (scope.row.invoiceStatus === 3 ? "已挂账" : "")))}}
+            {{scope.row.invoiceStatus === 0 ? "已暂存" : (scope.row.invoiceStatus === 1 ? "已提交" : (scope.row.invoiceStatus === 2 ? "已挂账" : ""))}}
           </template>
         </el-table-column>
         <el-table-column prop="onAccountDate" label="挂账日期"/>
-        <el-table-column prop="auditStatus" label="审核状态" v-if="type === 1" width="170">
-          <template slot-scope="scope">
-            {{scope.row.auditStatus === 0 ? "未审核" : (scope.row.auditStatus === 1 ? "审核不通过，请废弃此发票" : (scope.row.auditStatus === 2 ? "审核通过" : ""))}}
-          </template>
-        </el-table-column>
-        <el-table-column prop="invoiceStatus" label="发票类型">
-          <template slot-scope="scope">
-            {{scope.row.invoiceType === 0 ? "标准物资发票" : (scope.row.invoiceType === 1 ? "返利红字发票" : "")}}
-          </template>
-        </el-table-column>
+<!--        <el-table-column prop="auditStatus" label="审核状态" v-if="type === 1" width="170">-->
+<!--          <template slot-scope="scope">-->
+<!--            {{scope.row.auditStatus === 0 ? "未审核" : (scope.row.auditStatus === 1 ? "审核不通过，请废弃此发票" : (scope.row.auditStatus === 2 ? "审核通过" : ""))}}-->
+<!--          </template>-->
+<!--        </el-table-column>-->
+<!--        <el-table-column prop="invoiceStatus" label="发票类型">-->
+<!--          <template slot-scope="scope">-->
+<!--            {{scope.row.invoiceType === 0 ? "标准物资发票" : (scope.row.invoiceType === 1 ? "返利红字发票" : "")}}-->
+<!--          </template>-->
+<!--        </el-table-column>-->
         <el-table-column label="操作" width="180">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" title="审核通过" icon="el-icon-check" :disabled="scope.row.auditStatus !== 0" circle @click="audit(scope.row)" v-if="type !== 1"></el-button>
             <el-button size="mini" type="primary" title="审核不通过" icon="el-icon-close" :disabled="scope.row.auditStatus !== 0" circle @click="auditError(scope.row)" v-if="type !== 1"></el-button>
             <el-button size="mini" type="primary" title="挂账" icon="el-icon-document" :disabled="(!(scope.row.invoiceType === 1 && scope.row.invoiceStatus === 1)) && (!(scope.row.invoiceType === 0 && scope.row.invoiceStatus === 2))" circle @click="updateStatus(scope.row)" v-if="type !== 1"></el-button>
-            <el-button size="mini" type="primary" title="维护发票" icon="el-icon-edit" :disabled="scope.row.invoiceStatus === 3" circle @click="update(scope.row)" v-if="scope.row.invoiceType !== 1"></el-button>
-            <el-button size="mini" type="danger" title="废弃" icon="el-icon-delete" :disabled="scope.row.invoiceStatus !== 0" circle @click="remove(scope.row)" v-if="type === 1"></el-button>
+            <el-button size="mini" type="primary" title="维护发票" icon="el-icon-edit" :disabled="scope.row.invoiceStatus === 2" circle @click="update(scope.row)" v-if="scope.row.invoiceType !== 1"></el-button>
+            <el-button size="mini" type="primary" title="查看发票" icon="el-icon-view" circle @click="detail(scope.row)" ></el-button>
+<!--            <el-button size="mini" type="danger" title="废弃" icon="el-icon-delete" :disabled="scope.row.invoiceStatus !== 0" circle @click="remove(scope.row)" v-if="type === 1"></el-button>-->
           </template>
         </el-table-column>
       </el-table>
@@ -87,13 +92,16 @@
             <el-form-item label="临时发票号" prop="interimInvoiceNumber" style="width: 50%">
               <el-input class="jz-input" v-model="form.model.interimInvoiceNumber" disabled/>
             </el-form-item>
+
+
+
             <el-form-item label="发票号" prop="invoiceNumber" style="width: 50%">
               <el-input class="jz-input" v-model="form.model.invoiceNumber"/>
             </el-form-item>
           </el-form-item>
           <el-form-item class="jz-from-flex" label-width="0">
             <el-form-item label="发票代码" prop="invoiceCode" style="width: 50%">
-              <el-input class="jz-input" v-model="form.model.invoiceCode"/>
+              <el-input class="jz-input" v-model="form.model.invoiceCode" />
             </el-form-item>
             <el-form-item label="开票日期" prop="invoiceDate" style="width: 50%">
               <el-date-picker
@@ -105,26 +113,26 @@
             </el-form-item>
           </el-form-item>
           <el-form-item class="jz-from-flex" label-width="0">
-            <el-form-item label="不含税总金额" prop="aggregateAmount" style="width: 25%">
-              <el-input class="jz-input" v-model="form.model.aggregateAmount"/>
+            <el-form-item label="不含税总金额" prop="withoutTaxAmount" style="width: 25%">
+              <el-input class="jz-input" v-model="form.model.withoutTaxAmount" />
             </el-form-item>
             <el-form-item label="税率" prop="taxRate" style="width: 25%">
-              <el-input class="jz-input" v-model="form.model.taxRate">
-                <template slot="append">%</template>
+              <el-input class="jz-input" v-model="form.model.taxRate" >
+                <template slot="append" >%</template>
               </el-input>
             </el-form-item>
-            <el-form-item label="税额" prop="taxPrice" style="width: 25%">
-              <el-input class="jz-input" v-model="form.model.taxPrice"/>
+            <el-form-item label="税额" prop="taxAmount" style="width: 25%">
+              <el-input class="jz-input" v-model="form.model.taxAmount"/>
             </el-form-item>
-            <el-form-item label="税价合计" prop="taxPriceTotal" style="width: 25%">
-              <el-input class="jz-input" v-model="form.model.taxPriceTotal"/>
+            <el-form-item label="税价合计" prop="totalAmount" style="width: 25%">
+              <el-input class="jz-input" v-model="form.model.totalAmount"/>
             </el-form-item>
           </el-form-item>
           <el-form-item label="折扣原因" prop="discountCause" style="width: 50%">
             <el-input class="jz-input" v-model="form.model.discountCause"/>
           </el-form-item>
         </el-form>
-        <div class="jz-form-btn">
+        <div class="jz-form-btn" v-if="!form.check">
           <el-button type="primary" plain @click="save('form')">提 交</el-button>
         </div>
         <!--  Table  -->
@@ -148,6 +156,7 @@
         </div>
       </el-dialog>
     </div>
+
   </div>
 </template>
 
@@ -160,6 +169,7 @@ export default {
       type:this.$store.state.user.type,
       form:{
         title: '发票信息维护',
+        check:false,
         visible: false,
         model: {},
         formRules:{
@@ -172,16 +182,16 @@ export default {
           invoiceDate: [
             {required: true, message: '开票日期不能为空', trigger: 'blur'}
           ],
-          aggregateAmount: [
+          withoutTaxAmount: [
             {required: true, message: '不含税金额不能为空', trigger: 'blur'}
           ],
           taxRate: [
             {required: true, message: '税率不能为空', trigger: 'blur'}
           ],
-          taxPrice: [
+          taxAmount: [
             {required: true, message: '税额不能为空', trigger: 'blur'}
           ],
-          taxPriceTotal: [
+          totalAmount: [
             {required: true, message: '税价合计不能为空', trigger: 'blur'}
           ]
         }
@@ -205,6 +215,8 @@ export default {
     },
     update(data){
       //状态为‘暂存’和‘已提交’才可以修改
+      this.form.title="发票信息维护"
+      this.form.check=false
       if (data.invoiceStatus == 0 || data.invoiceStatus == 1 || data.invoiceStatus == 2){
         this.form.model = Object.assign({}, data)
         this.$api.supplier.procurement.finance.bill.getInvoicing({interimInvoiceNumber:data.interimInvoiceNumber}).then(res => {
@@ -219,6 +231,22 @@ export default {
         this.$message.warning("已挂账的信息不能维护")
       }
     },
+    detail(data){
+      //查看数据明细
+      this.form.title="发票信息查看"
+      this.form.check=true
+      this.form.formRules=null
+      this.form.model = Object.assign({}, data)
+      this.$api.supplier.procurement.finance.bill.getInvoicing({interimInvoiceNumber:data.interimInvoiceNumber}).then(res => {
+        if (res.code === 200){
+          this.InvoicingData = res.data.records
+          this.form.visible = true
+        } else {
+          this.$message.error(res.code + ':' + res.msg)
+        }
+      })
+    },
+
     remove(data){
       //状态为‘暂存’和‘已提交’才可以废弃
       if (data.invoiceStatus === 0){
@@ -305,16 +333,44 @@ export default {
         }
       })
     },
+    // save(formName) {
+    //   if (this.type === 1){
+    //     console.log(this.form.model.invoiceStatus)
+    //     if (this.form.model.invoiceStatus === 1 || this.form.model.invoiceStatus === 2){
+    //       this.$refs[formName].validate((valid) => {
+    //         if (valid) {
+    //           //修改数据格式
+    //           this.form.model.withoutTaxAmount = parseFloat(this.form.model.withoutTaxAmount).toFixed(2)
+    //           this.form.model.taxRate = parseFloat(this.form.model.taxRate) / 100
+    //           this.form.model.taxAmount = parseFloat(this.form.model.taxAmount).toFixed(2)
+    //           this.form.model.totalAmount = parseFloat(this.form.model.totalAmount).toFixed(2)
+    //           this.$api.supplier.procurement.finance.bill.update(this.form.model).then(res => {
+    //             if (res.code === 200){
+    //               this.tableUtil.initTable()
+    //               this.form.visible = false
+    //             } else {
+    //               this.$message.error(res.code + ":" + res.msg)
+    //             }
+    //           })
+    //         }
+    //       })
+    //     } else {
+    //       this.$message.warning("暂存的发票不能维护，请等待管理员审核为‘已提交’状态")
+    //     }
+    //   } else {
+    //     this.$message.warning("只有供应商才可以维护发票，企业人员只能查看")
+    //   }
+    // },
     save(formName) {
       if (this.type === 1){
-        if (this.form.model.invoiceStatus === 1 || this.form.model.invoiceStatus === 2){
+        if (this.form.model.invoiceStatus === 0 || this.form.model.invoiceStatus === 1){
           this.$refs[formName].validate((valid) => {
             if (valid) {
               //修改数据格式
-              this.form.model.aggregateAmount = parseFloat(this.form.model.aggregateAmount).toFixed(2)
+              this.form.model.withoutTaxAmount = parseFloat(this.form.model.withoutTaxAmount).toFixed(2)
               this.form.model.taxRate = parseFloat(this.form.model.taxRate) / 100
-              this.form.model.taxPrice = parseFloat(this.form.model.taxPrice).toFixed(2)
-              this.form.model.taxPriceTotal = parseFloat(this.form.model.taxPriceTotal).toFixed(2)
+              this.form.model.taxAmount = parseFloat(this.form.model.taxAmount).toFixed(2)
+              this.form.model.totalAmount = parseFloat(this.form.model.totalAmount).toFixed(2)
               this.$api.supplier.procurement.finance.bill.update(this.form.model).then(res => {
                 if (res.code === 200){
                   this.tableUtil.initTable()
@@ -326,7 +382,7 @@ export default {
             }
           })
         } else {
-          this.$message.warning("暂存的发票不能维护，请等待管理员审核为‘已提交’状态")
+          this.$message.warning("当前发票状态不可修改")
         }
       } else {
         this.$message.warning("只有供应商才可以维护发票，企业人员只能查看")

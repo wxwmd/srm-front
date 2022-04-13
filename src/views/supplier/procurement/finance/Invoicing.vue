@@ -202,6 +202,7 @@ export default {
         let index = false;
         //状态为‘未开票’才可以合票
         statusList.forEach(status => {
+          console.log("status:"+status)
           if (status != -1){
             index = true
           }

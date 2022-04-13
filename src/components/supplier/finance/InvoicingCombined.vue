@@ -37,9 +37,11 @@
                 <span>{{scope.row.notOutInvoiceNumber}}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="aggregateAmount" label="不含税总金额">
+
+
+            <el-table-column prop="withoutTaxAmount" label="不含税金额">
               <template slot-scope="scope">
-                <el-input size="small" v-model="scope.row.aggregateAmount"/>
+                <el-input size="small" v-model="scope.row.withoutTaxAmount"/>
               </template>
             </el-table-column>
 
@@ -49,7 +51,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="totalAmount" label="税额">
+            <el-table-column prop="totalAmount" label="价税合计">
               <template slot-scope="scope">
                 <el-input size="small" v-model="scope.row.totalAmount"/>
               </template>
@@ -85,25 +87,28 @@ export default {
   },
   created() {
     this.combinedTicket.combinedTicket.forEach(item => {
-      this.form.model.splitData.push({unitPrice:item.unitPrice,purchaseOrder: item.purchaseOrder,material:item.material,hongProject:item.hongProject,notOutInvoiceNumber:item.notOutInvoiceNumber,aggregateAmount:'',taxAmount:'',totalAmount:'',supplierCode:this.$store.state.user.username})
+      this.form.model.splitData.push({unitPrice:item.unitPrice,purchaseOrder: item.purchaseOrder,material:item.material,hongProject:item.hongProject,notOutInvoiceNumber:item.notOutInvoiceNumber,withoutTaxAmount:"",taxAmount:"",totalAmount:"",supplierCode:this.$store.state.user.username})
+      console.log(this.form.model.splitData)
     })
   },
   methods:{
     save(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          let aggregateAmountShow = true
+          let withoutTaxAmountShow = true
           this.form.model.splitData.forEach(item => {
             //总金额是否填写
             item.notOutInvoiceNumber = parseFloat(item.notOutInvoiceNumber).toFixed(3)
-            if(item.aggregateAmount === ''){
-              aggregateAmountShow = false
+            if(item.withoutTaxAmount === ''){
+              withoutTaxAmountShow = false
             } else {
-              item.aggregateAmount = parseFloat(item.aggregateAmount).toFixed(2)
+              item.withoutTaxAmount = parseFloat(item.withoutTaxAmount).toFixed(2)
             }
           })
           //总金额填写才可以合票
-          if (aggregateAmountShow === true){
+          if (withoutTaxAmountShow === true){
+            console.log("nmlgb")
+            console.log(this.form.model.splitData[0])
             this.$api.supplier.procurement.finance.invoicing.combined(this.form.model.splitData).then(res => {
               if (res.code === 200){
                 if (res.data === null){
