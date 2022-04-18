@@ -19,17 +19,16 @@
       </div>
       <div v-if="type === 1">
         <el-button type="primary" plain @click="exportData()">导出</el-button>
-<!--        <el-button type="primary" plain @click="verify()">验证</el-button>-->
-        <el-button type="primary" plain @click="split()">拆票</el-button>
+<!--&lt;!&ndash;        <el-button type="primary" plain @click="verify()">验证</el-button>&ndash;&gt;-->
+<!--        <el-button type="primary" plain @click="split()">拆票</el-button>-->
         <el-button type="primary" plain @click="combined()">开票</el-button>
       </div>
     </div>
     <!--  Table  -->
     <div class="jz-module-table">
       <div class="jz-attention" v-if="type === 1">
-        <p>*如果不需要拆票和合票，请直接验证，验证时请选择一行或多行进行验证</p>
-        <p>*如果金额大于限额，请进行拆票，拆票时请选择一行进行拆票</p>
-        <p>*如果多个单需要开在一个票上，请进行合票，合票时请选择多行进行合票</p>
+        <p>*供应商选取要开票的采购订单行，点击开票，录入不含税金额、税额、价税合计，提交之后完成开票</p>
+        <p>*冻结数目不为0的项目无法开票</p>
       </div>
       <el-table highlight-current-row
                 border
@@ -72,18 +71,17 @@
       </el-pagination>
     </div>
     <invoicing-combined :combinedTicket="combin" v-if="combin.combinedShow"></invoicing-combined>
-    <invoicing-split :splitTicket="splitClick" v-if="splitClick.splitShow"></invoicing-split>
+<!--    <invoicing-split :splitTicket="splitClick" v-if="splitClick.splitShow"></invoicing-split>-->
   </div>
 </template>
 
 <script>
 import TableUtil from '@/assets/supplier/js/TableUtil'
 import InvoicingCombined from "@/components/supplier/finance/InvoicingCombined";
-import InvoicingSplit from "@/components/supplier/finance/InvoicingSplit";
 
 export default {
   name: "Invoicing",
-  components:{InvoicingCombined,InvoicingSplit},
+  components:{InvoicingCombined},
   data() {
     return {
       type:this.$store.state.user.type,
@@ -115,14 +113,12 @@ export default {
       this.tableUtil.initTable()
     },
     clickData(row, event, column){
-      console.log(event,column)
       if (row.freezeNumber!==0){
         alert("冻结数量不为0！请联系管理员")
       }
     },
     // Freezenumber为0才可选
     checkFreezeNum (row, index){
-      console.log(index)
       return row.freezeNumber===0;
     },
     // changeTime(){
@@ -173,20 +169,20 @@ export default {
     //   }
     // },
     //拆票
-    split(){
-      if (this.$refs.multipleTable.selection.length === 0){
-        this.$message.error('请选择需要拆票的行项目')
-      } else if (this.$refs.multipleTable.selection.length > 1){
-        this.$message.error('每次只能对一个行项目进行拆票')
-      } else {
-        if (this.$refs.multipleTable.selection[0].status === -1){
-          this.splitClick.splitShow = true
-          this.splitClick.splitTicket = this.$refs.multipleTable.selection[0]
-        } else {
-          this.$message.error('请选择状态为“未开票”的行项目进行拆票')
-        }
-      }
-    },
+    // split(){
+    //   if (this.$refs.multipleTable.selection.length === 0){
+    //     this.$message.error('请选择需要拆票的行项目')
+    //   } else if (this.$refs.multipleTable.selection.length > 1){
+    //     this.$message.error('每次只能对一个行项目进行拆票')
+    //   } else {
+    //     if (this.$refs.multipleTable.selection[0].status === -1){
+    //       this.splitClick.splitShow = true
+    //       this.splitClick.splitTicket = this.$refs.multipleTable.selection[0]
+    //     } else {
+    //       this.$message.error('请选择状态为“未开票”的行项目进行拆票')
+    //     }
+    //   }
+    // },
     //合票
     combined(){
       if (this.$refs.multipleTable.selection.length === 0){
@@ -199,17 +195,17 @@ export default {
           this.verifyList.push({id:order.id})
           statusList.push(order.status)
         })
-        let index = false;
+        let flag = true;
         //状态为‘未开票’才可以合票
         statusList.forEach(status => {
-          console.log("status:"+status)
           if (status != -1){
-            index = true
+            flag = false
           }
         })
-        if (index === false){
+        if (flag){
           this.combin.combinedShow = true
           this.combin.combinedTicket = this.$refs.multipleTable.selection
+          this.$refs.multipleTable.clearSelection()
         } else {
           this.$message.error('请选择状态为”未开票“的行项目进行开票')
         }

@@ -35,9 +35,9 @@
         <el-table-column prop="company" label="公司"/>
         <el-table-column prop="voucherNumber" label="凭证号"/>
         <el-table-column prop="digest" label="摘要"/>
-        <el-table-column prop="debitDomestic" label="（借方）本币" width="120"/>
-        <el-table-column prop="creditDomestic" label="（贷方）本币" width="120"/>
-        <el-table-column prop="balanceDomestic" label="（余额）本币" width="120"/>
+        <el-table-column prop="debitDomestic" label="借方" width="120"/>
+        <el-table-column prop="creditDomestic" label="贷方" width="120"/>
+        <el-table-column prop="balanceDomestic" label="余额" width="120"/>
         <el-table-column prop="direction" label="方向"/>
         <el-table-column prop="date" label="日期" width="150"/>
       </el-table>

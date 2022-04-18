@@ -88,7 +88,6 @@ export default {
   created() {
     this.combinedTicket.combinedTicket.forEach(item => {
       this.form.model.splitData.push({unitPrice:item.unitPrice,purchaseOrder: item.purchaseOrder,material:item.material,hongProject:item.hongProject,notOutInvoiceNumber:item.notOutInvoiceNumber,withoutTaxAmount:"",taxAmount:"",totalAmount:"",supplierCode:this.$store.state.user.username})
-      console.log(this.form.model.splitData)
     })
   },
   methods:{
@@ -107,8 +106,6 @@ export default {
           })
           //总金额填写才可以合票
           if (withoutTaxAmountShow === true){
-            console.log("nmlgb")
-            console.log(this.form.model.splitData[0])
             this.$api.supplier.procurement.finance.invoicing.combined(this.form.model.splitData).then(res => {
               if (res.code === 200){
                 if (res.data === null){

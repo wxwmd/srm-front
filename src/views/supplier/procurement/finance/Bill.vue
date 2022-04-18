@@ -34,7 +34,8 @@
                 size="mini"
                 :header-cell-style="{background:'#f9f9f9'}"
                 :data="tableUtil.table.tableData"
-                style="width:100%">
+                style="width:100%"
+                @row-dblclick="detail">
         <el-table-column type="index" width="50"/>
         <el-table-column prop="supplierCode" v-if="this.$store.state.user.type !== 1" label="供应商编码" width="150"/>
 <!--        <el-table-column prop="interimInvoiceNumber" label="临时发票号"/>-->
