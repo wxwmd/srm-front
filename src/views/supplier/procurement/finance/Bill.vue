@@ -118,15 +118,15 @@
               <el-input class="jz-input" v-model="form.model.withoutTaxAmount" />
             </el-form-item>
             <el-form-item label="税率" prop="taxRate" style="width: 25%">
-              <el-input class="jz-input" v-model="form.model.taxRate" >
+              <el-input class="jz-input" v-model="form.model.taxRate" @change="caculate1" >
                 <template slot="append" >%</template>
               </el-input>
             </el-form-item>
             <el-form-item label="税额" prop="taxAmount" style="width: 25%">
-              <el-input class="jz-input" v-model="form.model.taxAmount"/>
+              <el-input class="jz-input" v-model="form.model.taxAmount" @change="caculate2"/>
             </el-form-item>
             <el-form-item label="税价合计" prop="totalAmount" style="width: 25%">
-              <el-input class="jz-input" v-model="form.model.totalAmount"/>
+              <el-input class="jz-input" v-model="form.model.totalAmount" @change="caculate3"/>
             </el-form-item>
           </el-form-item>
           <el-form-item label="折扣原因" prop="discountCause" style="width: 50%">
@@ -398,10 +398,27 @@ export default {
       this.$nextTick(() => {
         this.$refs['form'].resetFields()
       })
+    },
+
+    caculate1(){
+      this.form.model.taxAmount=parseFloat(this.form.model.withoutTaxAmount) * parseFloat(this.form.model.taxRate) /100
+      this.form.model.totalAmount=parseFloat(this.form.model.withoutTaxAmount) + parseFloat(this.form.model.taxAmount)
+    },
+    caculate2(){
+      this.form.model.taxRate=parseFloat(this.form.model.taxAmount) / parseFloat(this.form.model.withoutTaxAmount) *100
+      this.form.model.totalAmount=parseFloat(this.form.model.withoutTaxAmount) + parseFloat(this.form.model.taxAmount)
+    },
+    caculate3(event,param){
+      this.form.model.taxAmount=parseFloat(this.form.model.totalAmount) - parseFloat(this.form.model.withoutTaxAmount)
+      this.form.model.taxRate=parseFloat(this.form.model.taxAmount) / parseFloat(this.form.model.withoutTaxAmount) *100
     }
-  }
+
+}
 }
 </script>
+
+
+
 
 <style scoped>
   /deep/ .el-date-editor.el-input, .el-date-editor.el-input__inner{

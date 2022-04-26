@@ -32,6 +32,43 @@
             <el-input class="jz-input" onkeyup="value=value.replace(/[^\d.]/g,'')" v-model="form.model.resultList.taxPriceTotal"/>
           </el-form-item>
         </el-form-item>
+<!--        -->
+<!--        <el-form-item>-->
+<!--          <el-table size="small" border-->
+<!--                    row-class-name="jz-table-row"-->
+<!--                    cell-class-name="jz-table-cell"-->
+<!--                    :data="form.model.combinedData"-->
+<!--                    :header-cell-style="{background:'#f6f6f6'}"-->
+<!--                    style="width:100%">-->
+<!--            <el-table-column type="index" width="50"/>-->
+<!--            <el-table-column prop="purchaseOrder" label="订单号">-->
+<!--              <template slot-scope="scope">-->
+<!--                <span>{{scope.row.purchaseOrder}}</span>-->
+<!--              </template>-->
+<!--            </el-table-column>-->
+<!--            <el-table-column prop="materialNumber" label="物料">-->
+<!--              <template slot-scope="scope">-->
+<!--                <span>{{scope.row.materialNumber}}</span>-->
+<!--              </template>-->
+<!--            </el-table-column>-->
+<!--            <el-table-column prop="materialDescribe" label="物料描述">-->
+<!--              <template slot-scope="scope">-->
+<!--                <span>{{scope.row.materialDescribe}}</span>-->
+<!--              </template>-->
+<!--            </el-table-column>-->
+<!--            <el-table-column prop="quantity" label="数量">-->
+<!--              <template slot-scope="scope">-->
+<!--                <span>{{scope.row.quantity}}</span>-->
+<!--              </template>-->
+<!--            </el-table-column>-->
+<!--          </el-table>-->
+<!--        </el-form-item>-->
+      </el-form>
+      <div class="jz-form-btn">
+        <el-button type="primary" plain @click="save('form')">确 定</el-button>
+      </div>
+
+      <el-form :model="form.model" ref="form" :rules='form.formRules' label-width="100px" style="margin-top: 20px">
         <el-form-item>
           <el-table size="small" border
                     row-class-name="jz-table-row"
@@ -63,9 +100,6 @@
           </el-table>
         </el-form-item>
       </el-form>
-      <div class="jz-form-btn">
-        <el-button type="primary" plain @click="save('form')">确 定</el-button>
-      </div>
     </el-dialog>
   </div>
 </template>

@@ -27,17 +27,29 @@
                 size="mini"
                 :header-cell-style="{background:'#f9f9f9'}"
                 :data="tableUtil.table.tableData"
+                @row-dblclick="detail"
                 style="width:100%">
         <el-table-column type="index" width="50"/>
-        <el-table-column prop="supplierCode" v-if="this.$store.state.user.type !== 1" label="供应商编码" width="150"/>
+<!--        <el-table-column prop="supplierCode" v-if="this.$store.state.user.type !== 1" label="供应商编码" width="150"/>-->
+<!--        <el-table-column prop="invoiceCode" label="发票代码"/>-->
+<!--        <el-table-column prop="invoiceNumber" label="发票号"/>-->
+<!--        <el-table-column prop="invoiceDate" label="发票日期"/>-->
+<!--        <el-table-column prop="amount" label="不含税金额"/>-->
+<!--        <el-table-column prop="taxAmount" label="税额"/>-->
+<!--        <el-table-column prop="taxRate" label="税率（%）"/>-->
+<!--        <el-table-column prop="taxPriceTotal" label="税价合计"/>-->
+<!--        <el-table-column prop="outInvoicePeriod" label="开票区间"/>-->
+        <el-table-column prop="supplierCode" label="供应商编码" width="150"/>
+        <el-table-column prop="supplierName" label="供应商名称" width="150"/>
         <el-table-column prop="invoiceCode" label="发票代码"/>
-        <el-table-column prop="invoiceNumber" label="发票号"/>
+        <el-table-column prop="invoiceNumber" label="发票号码"/>
         <el-table-column prop="invoiceDate" label="发票日期"/>
         <el-table-column prop="amount" label="不含税金额"/>
         <el-table-column prop="taxAmount" label="税额"/>
         <el-table-column prop="taxRate" label="税率（%）"/>
         <el-table-column prop="taxPriceTotal" label="税价合计"/>
-        <el-table-column prop="outInvoicePeriod" label="开票区间"/>
+        <el-table-column prop="outInvoicePeriod" label="发票期间"/>
+
         <el-table-column prop="invoiceStatus" label="状态">
           <template slot-scope="scope">
             {{scope.row.invoiceStatus === 0 ? "已提交" : (scope.row.invoiceStatus === 1 ? "已挂账" : "")}}
@@ -51,7 +63,7 @@
         <el-table-column label="操作" width="90" v-if="type === 1">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" icon="el-icon-edit" circle @click="update(scope.row)"></el-button>
-            <el-button size="mini" type="danger" icon="el-icon-delete" circle @click="remove(scope.row)"></el-button>
+<!--            <el-button size="mini" type="danger" icon="el-icon-delete" circle @click="remove(scope.row)"></el-button>-->
           </template>
         </el-table-column>
       </el-table>
@@ -103,7 +115,7 @@
             <el-input class="jz-input" v-model="form.model.discountCause"/>
           </el-form-item>
         </el-form>
-        <div class="jz-form-btn">
+        <div class="jz-form-btn" v-if="!form.check">
           <el-button type="primary" plain @click="save('form')">提 交</el-button>
         </div>
         <!--  Table  -->
@@ -137,6 +149,7 @@ export default {
       form:{
         title: '发票信息维护',
         visible: false,
+        check:false,
         model: {},
         formRules:{
           invoiceNumber: [
@@ -184,6 +197,8 @@ export default {
       this.form.model.taxPriceTotal = parseFloat(this.form.model.amount) + parseFloat(this.form.model.taxAmount)
     },
     update(data){
+      this.form.check=false
+      this.form.title="发票信息维护"
       //状态为‘已提交’才可以修改
       if (data.invoiceStatus == 0){
         this.form.model = Object.assign({}, data)
@@ -198,6 +213,22 @@ export default {
       } else {
         this.$message.warning("已挂账的信息不能维护")
       }
+    },
+    detail(data){
+      //查看数据明细
+      this.form.title="发票信息查看"
+      this.form.check=true
+      this.form.formRules=null
+      this.form.model = Object.assign({}, data)
+      this.form.model = Object.assign({}, data)
+      this.$api.supplier.procurement.finance.consignmentBill.getInvoicing({invoiceNumber:data.invoiceNumber}).then(res => {
+        if (res.code === 200){
+          this.InvoicingData = res.data.records
+          this.form.visible = true
+        } else {
+          this.$message.error(res.code + ':' + res.msg)
+        }
+      })
     },
     remove(data){
       //状态为‘已提交’才可以废弃

@@ -1,9 +1,14 @@
 <template>
   <div class="jz-supplier-container">
     <!--  ToolBar  -->
+    <div class="jz-attention" v-if="type === 1">
+      <p>*选择开票区间后点击查询，得到开票区间范围内的寄售物资</p>
+      <p>*核对金额无误后，点击开票进行开票管理</p>
+    </div>
     <div class="jz-module-toolbar">
       <div>
-        <el-input class="jz-input" size="mini" clearable v-if="this.$store.state.user.type !== 1" v-model="tableUtil.filter.supplierCode" placeholder="供应商编码"/>
+<!--        <el-input class="jz-input" size="mini" clearable v-if="this.$store.state.user.type !== 1" v-model="tableUtil.filter.supplierCode" placeholder="供应商编码"/>-->
+
         <el-date-picker
           v-model="tableUtil.filter.startTime"
           value-format="yyyy-MM-dd"
@@ -38,9 +43,6 @@
     </div>
     <!--  Table  -->
     <div class="jz-module-table">
-      <div class="jz-attention" v-if="type === 1">
-        <p>*选择开票区间后才可以开票</p>
-      </div>
       <div class="jz-invoice" v-if="show">
 <!--        <span>开票区间：</span>-->
 <!--        <span>{{tableUtil.filter.outInvoicePeriod}}</span>-->
@@ -82,12 +84,13 @@
 <!--          </template>-->
 <!--        </el-table-column>-->
 
-        <el-table-column prop="supplierCode" label="供应商编码" width="150"/>
-        <el-table-column prop="supplierName" label="供应商名称" width="250"/>
-        <el-table-column prop="materialNumber" label="物料号" width="100"/>
+        <el-table-column type="index" width="50"/>
+        <el-table-column prop="supplierCode" label="供应商编码" width="250"/>
+        <el-table-column prop="supplierName" label="供应商名称" width="350"/>
+        <el-table-column prop="materialNumber" label="物料号" width="250"/>
         <el-table-column prop="materialName" label="物料名称" width="250"/>
-        <el-table-column prop="plant" label="工厂" width="120"/>
-        <el-table-column prop="outInvoicePeriod" label="开票期间" width="120"/>
+        <el-table-column prop="plant" label="工厂" width="150"/>
+        <el-table-column prop="outInvoicePeriod" label="开票期间" width="200"/>
         <el-table-column prop="quantity" label="数量"/>
       </el-table>
 
@@ -96,7 +99,7 @@
     <div class="jz-module-pagination">
       <el-pagination @size-change="pageSizeChange"
                      @current-change="pageCurrentChange"
-                     :page-size="10"
+                     :page-size="10000000"
                      layout="total, prev, pager, next, jumper"
                      :total="tableUtil.table.total">
       </el-pagination>
@@ -118,13 +121,14 @@ export default {
     return {
       type:this.$store.state.user.type,
       tableUtil: {
-        filter:{
-          limit: 10,
-          page: 1
-        },
         // filter:{
-        //
+        //   limit: 10,
+        //   page: 1
         // },
+        filter:{
+          limit:10000000,
+          page:1
+        },
         table: {
           tableData: [],
           total: 0,
@@ -228,7 +232,10 @@ export default {
     //   }
     // },
     combined(){
-      if (this.selectShow === false){
+      if (this.tableUtil.filter.startTime==null || this.tableUtil.filter.endTime==null){
+        this.$message.error('请选择开票区间')
+      }
+      else if (this.selectShow === false){
         this.combinedTicket.isCombined = true
         this.combinedTicket.combinedList = this.tableUtil.table.tableData
       } else {

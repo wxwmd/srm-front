@@ -1,3 +1,5 @@
+<!--标准物资开票管理界面-->
+
 <template>
   <div class="jz-supplier-container">
     <!--  ToolBar  -->

@@ -32,7 +32,7 @@
 <!--              </template>-->
 <!--            </el-table-column>-->
 
-            <el-table-column prop="notOutInvoiceNumber" label="数量">
+            <el-table-column prop="notOutInvoiceNumber" label="未开票数量">
               <template slot-scope="scope">
                 <span>{{scope.row.notOutInvoiceNumber}}</span>
               </template>
@@ -45,15 +45,21 @@
               </template>
             </el-table-column>
 
+            <el-table-column prop="withoutTaxAmount" label="税率(%)">
+              <template slot-scope="scope">
+                <el-input size="small" v-model="scope.row.taxRate" @change="caculate1($event,scope.row)"/>
+              </template>
+            </el-table-column>
+
             <el-table-column prop="taxAmount" label="税额">
               <template slot-scope="scope">
-                <el-input size="small" v-model="scope.row.taxAmount"/>
+                <el-input size="small" v-model="scope.row.taxAmount" @change="caculate2($event,scope.row)"/>
               </template>
             </el-table-column>
 
             <el-table-column prop="totalAmount" label="价税合计">
               <template slot-scope="scope">
-                <el-input size="small" v-model="scope.row.totalAmount"/>
+                <el-input size="small" v-model="scope.row.totalAmount" @change="caculate3($event,scope.row)"/>
               </template>
             </el-table-column>
 
@@ -187,16 +193,16 @@ export default {
           //金额校验成功才能开票
           if (this.amountcheck){
             this.$api.supplier.procurement.finance.invoicing.combined(this.form.model.splitData).then(res => {
-              if (res.code === 200){
-                if (res.data === null){
-                  this.$parent.tableUtil.initTable()
-                  this.combinedTicket.combinedShow = false
-                  this.$message.success('开票成功')
+                if (res.code === 200){
+                  if (res.data === null){
+                    this.$parent.tableUtil.initTable()
+                    this.combinedTicket.combinedShow = false
+                    this.$message.success('开票成功')
+                  } else {
+                    this.$message.error('订单号为：' + res.data[0].purchaseOrder + '，物料号为：' + res.data[0].material + '，行项目为：' + res.data[0].hongProject + '的不含税总金额错误')
+                    this.fail=true
+                  }
                 } else {
-                  this.$message.error('订单号为：' + res.data[0].purchaseOrder + '，物料号为：' + res.data[0].material + '，行项目为：' + res.data[0].hongProject + '的不含税总金额错误')
-                  this.fail=true
-                }
-              } else {
                 this.fail=true
                 this.$message.error(res.code + ":" + res.msg)
               }
@@ -231,6 +237,30 @@ export default {
       this.$nextTick(() => {
         this.$refs['form'].resetFields()
       })
+    },
+    caculate1(event,param){
+      if (param.withoutTaxAmount!==''){
+        if (param.taxRate !==''){
+          param.taxAmount=parseFloat(param.withoutTaxAmount) * parseFloat(param.taxRate) /100
+          param.totalAmount=parseFloat(param.withoutTaxAmount) + parseFloat(param.taxAmount)
+        }
+      }
+    },
+    caculate2(event,param){
+      if (param.withoutTaxAmount!==''){
+        if (param.taxAmount!==''){
+          param.taxRate=parseFloat(param.taxAmount) / parseFloat(param.withoutTaxAmount) *100
+          param.totalAmount=parseFloat(param.withoutTaxAmount) + parseFloat(param.taxAmount)
+        }
+      }
+    },
+    caculate3(event,param){
+      if (param.withoutTaxAmount!==''){
+        if (param.totalAmount!==''){
+            param.taxAmount=parseFloat(param.totalAmount) - parseFloat(param.withoutTaxAmount)
+            param.taxRate=parseFloat(param.taxAmount) / parseFloat(param.withoutTaxAmount) *100
+        }
+      }
     }
   }
 }
