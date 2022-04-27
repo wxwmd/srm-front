@@ -1,3 +1,5 @@
+<!--标准物资开票详情页面-->
+
 <template>
   <div class="jz-form">
     <el-dialog title="开票" :close-on-click-modal="false" :visible.sync="combinedTicket.combinedShow" width="1200px" destroy-on-close>

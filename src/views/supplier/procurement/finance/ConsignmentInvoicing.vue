@@ -151,7 +151,8 @@ export default {
   },
   created() {
     this.util = new TableUtil(this.$api.supplier.procurement.finance.consignmentInvoicing, {}, '寄售物资开票');
-    this.initTable()
+    // 界面刚加载不显示一堆记录
+    //this.initTable()
     this.getOutInvoicePeriod()
   },
   methods: {
@@ -164,13 +165,18 @@ export default {
       this.initTable()
     },
     doSearch() {
-      if (this.tableUtil.filter.invoiceGroup !== '' && this.tableUtil.filter.invoiceGroup !== undefined){
-        this.show = true
+      if (this.tableUtil.filter.startTime==null || this.tableUtil.filter.endTime==null){
+        this.$message.error('请选择开票区间')
+      } else {
+        if (this.tableUtil.filter.invoiceGroup !== '' && this.tableUtil.filter.invoiceGroup !== undefined){
+          this.show = true
+        }
+        this.tableUtil.filter.status = -1
+        this.initTable()
       }
-      this.tableUtil.filter.status = -1
-      this.initTable()
     },
     initTable() {
+      // 初始化表
       this.$api.supplier.procurement.finance.consignmentInvoicing.getAll(this.tableUtil.filter).then(res => {
         if (res.code === 200) {
           this.tableUtil.table.tableData = res.data.records[0].consignmentSalesInvoiceOuts
@@ -232,13 +238,17 @@ export default {
     //   }
     // },
     combined(){
-      if (this.tableUtil.filter.startTime==null || this.tableUtil.filter.endTime==null){
+      if (this.tableUtil.table.tableData.length===0){
+        this.$message.error('没有可以开票的行')
+      }
+      else if (this.tableUtil.filter.startTime==null || this.tableUtil.filter.endTime==null){
         this.$message.error('请选择开票区间')
       }
       else if (this.selectShow === false){
         this.combinedTicket.isCombined = true
         this.combinedTicket.combinedList = this.tableUtil.table.tableData
-      } else {
+      }
+      else {
         if (this.$refs.multipleTable.selection.length === 0){
           this.$message.error('请选择需要开票的行')
         } else {

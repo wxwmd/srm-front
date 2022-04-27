@@ -1,3 +1,5 @@
+<!--寄售物资开票管理界面-->
+
 <template>
   <div class="jz-supplier-container">
     <!--  ToolBar  -->
@@ -274,6 +276,7 @@ export default {
           //修改数据格式
           this.$api.supplier.procurement.finance.consignmentBill.update(this.form.model).then(res => {
             if (res.code === 200){
+              this.tableUtil.initTable()
               this.tableUtil.initTable()
               this.form.visible = false
             } else {

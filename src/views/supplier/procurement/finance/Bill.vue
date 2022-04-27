@@ -115,18 +115,18 @@
           </el-form-item>
           <el-form-item class="jz-from-flex" label-width="0">
             <el-form-item label="不含税总金额" prop="withoutTaxAmount" style="width: 25%">
-              <el-input class="jz-input" v-model="form.model.withoutTaxAmount" />
+              <el-input class="jz-input" v-model="form.model.withoutTaxAmount" @change="calculate0"/>
             </el-form-item>
             <el-form-item label="税率" prop="taxRate" style="width: 25%">
-              <el-input class="jz-input" v-model="form.model.taxRate" @change="caculate1" >
+              <el-input class="jz-input" v-model="form.model.taxRate" @change="calculate1" >
                 <template slot="append" >%</template>
               </el-input>
             </el-form-item>
             <el-form-item label="税额" prop="taxAmount" style="width: 25%">
-              <el-input class="jz-input" v-model="form.model.taxAmount" @change="caculate2"/>
+              <el-input class="jz-input" v-model="form.model.taxAmount" @change="calculate2"/>
             </el-form-item>
             <el-form-item label="税价合计" prop="totalAmount" style="width: 25%">
-              <el-input class="jz-input" v-model="form.model.totalAmount" @change="caculate3"/>
+              <el-input class="jz-input" v-model="form.model.totalAmount" @change="calculate3"/>
             </el-form-item>
           </el-form-item>
           <el-form-item label="折扣原因" prop="discountCause" style="width: 50%">
@@ -399,16 +399,22 @@ export default {
         this.$refs['form'].resetFields()
       })
     },
-
-    caculate1(){
+    calculate0(){
+      console.log('nmlgb')
+      if (this.form.model.taxRate!==''){
+        this.form.model.taxAmount=parseFloat(this.form.model.withoutTaxAmount) * parseFloat(this.form.model.taxRate) /100
+        this.form.model.totalAmount=parseFloat(this.form.model.withoutTaxAmount) + parseFloat(this.form.model.taxAmount)
+      }
+    },
+    calculate1(){
       this.form.model.taxAmount=parseFloat(this.form.model.withoutTaxAmount) * parseFloat(this.form.model.taxRate) /100
       this.form.model.totalAmount=parseFloat(this.form.model.withoutTaxAmount) + parseFloat(this.form.model.taxAmount)
     },
-    caculate2(){
+    calculate2(){
       this.form.model.taxRate=parseFloat(this.form.model.taxAmount) / parseFloat(this.form.model.withoutTaxAmount) *100
       this.form.model.totalAmount=parseFloat(this.form.model.withoutTaxAmount) + parseFloat(this.form.model.taxAmount)
     },
-    caculate3(event,param){
+    calculate3(event,param){
       this.form.model.taxAmount=parseFloat(this.form.model.totalAmount) - parseFloat(this.form.model.withoutTaxAmount)
       this.form.model.taxRate=parseFloat(this.form.model.taxAmount) / parseFloat(this.form.model.withoutTaxAmount) *100
     }
