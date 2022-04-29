@@ -62,7 +62,7 @@
             <el-button size="mini" type="primary" @click="updateStatus(scope.row)" :disabled="scope.row.invoiceStatus === 1">挂账</el-button>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="90" v-if="type === 1">
+        <el-table-column label="维护发票信息" width="110" v-if="type === 1">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" icon="el-icon-edit" circle @click="update(scope.row)"></el-button>
 <!--            <el-button size="mini" type="danger" icon="el-icon-delete" circle @click="remove(scope.row)"></el-button>-->

@@ -6,12 +6,15 @@
       <el-form :model="form.model" ref="form" :rules='form.formRules' label-width="100px">
 <!--        <el-form :model="form.model" ref="form" :rules='formRules' label-width="100px">-->
         <el-form-item class="jz-from-flex" label-width="0">
+
           <el-form-item label="发票代码" prop="invoiceCode" style="width: 50%">
             <el-input class="jz-input" onkeyup="value=value.replace(/[\u4E00-\u9FA5]/g,'')" v-model="form.model.invoiceCode"/>
           </el-form-item>
+
           <el-form-item label="发票号" prop="invoiceNumber" style="width: 25%">
             <el-input class="jz-input" onkeyup="value=value.replace(/[\u4E00-\u9FA5]/g,'')" v-model="form.model.invoiceNumber"/>
           </el-form-item>
+
           <el-form-item label="发票日期" prop="invoiceDate" style="width: 25%">
             <el-date-picker
               value-format="yyyy-MM-dd"
@@ -21,18 +24,20 @@
             </el-date-picker>
           </el-form-item>
         </el-form-item>
+
         <el-form-item class="jz-from-flex" label-width="0">
           <el-form-item label="不含税金额" prop="amount" style="width: 25%">
-            <el-input class="jz-input" onkeyup="value=value.replace(/[^\d.]/g,'')" @change="calculate0()" v-model="form.model.resultList.amount"/>
+            <el-input class="jz-input" @change="calculate0()" v-model="form.model.amount"/>
           </el-form-item>
+
           <el-form-item label="税率(%)" prop="taxRate" style="width: 25%">
-            <el-input class="jz-input" onkeyup="value=value.replace(/[^\d.]/g,'')" @change="calculate1()" v-model="form.model.resultList.taxRate"/>
+            <el-input class="jz-input"  @change="calculate1()" v-model="form.model.taxRate"/>
           </el-form-item>
           <el-form-item label="税额" prop="taxAmount" style="width: 25%">
-            <el-input class="jz-input" onkeyup="value=value.replace(/[^\d.]/g,'')" @change="calculate2()" v-model="form.model.resultList.taxAmount"/>
+            <el-input class="jz-input"  @change="calculate2()" v-model="form.model.taxAmount"/>
           </el-form-item>
           <el-form-item label="税价合计" prop="taxPriceTotal" style="width: 25%">
-            <el-input class="jz-input" onkeyup="value=value.replace(/[^\d.]/g,'')" v-model="form.model.resultList.taxPriceTotal"/>
+            <el-input class="jz-input"  v-model="form.model.taxPriceTotal"/>
           </el-form-item>
         </el-form-item>
 <!--        -->
@@ -119,11 +124,19 @@ export default {
       isAdd: false,
       form: {
         model: {
+          amount:'',
+          taxRate:'',
+          taxAmount:'',
+          taxPriceTotal:'',
           resultList:{
-            amount:0,
-            taxRate:0.,
-            taxAmount:0,
-            taxPriceTotal:0
+            // amount:'', // 用户输入的不含税价格
+            // taxRate:'',
+            // taxAmount:'',
+            // taxPriceTotal:'',
+            truthAmount:0, // 真实的不含税价格
+            truthTaxRate:0,
+            truthTaxAmount:0,
+            truthTaxPriceTotal:0
           },
           combinedData: [],
         },
@@ -138,16 +151,16 @@ export default {
             {required: true, message: '发票日期不能为空', trigger: 'blur'}
           ],
           amount:[
-            // {required: true, message: '不含税总金额不能为空', trigger: 'blur'}
+            {required: true, message: '不含税总金额不能为空', trigger: 'blur'}
           ],
           taxRate:[
-            // {required: true, message: '税率不能为空', trigger: 'blur'}
+            {required: true, message: '税率不能为空', trigger: 'blur'}
           ],
           taxAmount:[
-            // {required: true, message: '税额不能为空', trigger: 'blur'}
+            {required: true, message: '税额不能为空', trigger: 'blur'}
           ],
           taxPriceTotal:[
-            // {required: true, message: '税价合计不能为空', trigger: 'blur'}
+            {required: true, message: '税价合计不能为空', trigger: 'blur'}
           ]
         },
       },
@@ -168,10 +181,10 @@ export default {
       //计算选中数据的总额
       this.$api.supplier.procurement.finance.consignmentInvoicing.getTotal({ids: this.idList}).then(res => {
         if (res.code === 200){
-          this.form.model.resultList.amount = res.data[0]
-          this.form.model.resultList.taxAmount = res.data[1]
-          this.form.model.resultList.taxPriceTotal = res.data[2]
-          this.form.model.resultList.taxRate=res.data[3]
+          this.form.model.resultList.truthAmount = res.data[0]
+          this.form.model.resultList.truthTaxAmount = res.data[1]
+          this.form.model.resultList.truthTaxPriceTotal = res.data[2]
+          this.form.model.resultList.truthTaxRate=res.data[3]
         } else {
           this.$message.error(res.code + ':' + res.msg)
         }
@@ -179,26 +192,26 @@ export default {
     },
     //计算
     calculate0(){
-      if (this.form.model.resultList.amount!=null && this.form.model.resultList.amount!==''){
-        if (this.form.model.resultList.taxRate!=null && this.form.model.resultList.taxRate!==''){
-          this.form.model.resultList.taxAmount = parseFloat(this.form.model.resultList.amount) * parseFloat(this.form.model.resultList.taxRate) / 100
-          this.form.model.resultList.taxPriceTotal = parseFloat(this.form.model.resultList.amount) + parseFloat(this.form.model.resultList.taxAmount)
+      if (this.form.model.amount!=null && this.form.model.amount!==''){
+        if (this.form.model.taxRate!=null && this.form.model.taxRate!==''){
+          this.form.model.taxAmount = parseFloat(this.form.model.amount) * parseFloat(this.form.model.taxRate) / 100
+          this.form.model.taxPriceTotal = parseFloat(this.form.model.amount) + parseFloat(this.form.model.taxAmount)
         }
       }
     },
     calculate1(){
-      if (this.form.model.resultList.amount!=null && this.form.model.resultList.amount!==''){
-        if (this.form.model.resultList.taxRate!=null && this.form.model.resultList.taxRate!==''){
-          this.form.model.resultList.taxAmount = parseFloat(this.form.model.resultList.amount) * parseFloat(this.form.model.resultList.taxRate) / 100
-          this.form.model.resultList.taxPriceTotal = parseFloat(this.form.model.resultList.amount) + parseFloat(this.form.model.resultList.taxAmount)
+      if (this.form.model.amount!=null && this.form.model.amount!==''){
+        if (this.form.model.taxRate!=null && this.form.model.taxRate!==''){
+          this.form.model.taxAmount = parseFloat(this.form.model.amount) * parseFloat(this.form.model.taxRate) / 100
+          this.form.model.taxPriceTotal = parseFloat(this.form.model.amount) + parseFloat(this.form.model.taxAmount)
         }
       }
     },
     calculate2(){
-      if (this.form.model.resultList.amount!=null && this.form.model.resultList.amount!==''){
-        if (this.form.model.resultList.taxAmount!=null && this.form.model.resultList.taxAmount!==''){
-          this.form.model.resultList.taxRate=  parseFloat(this.form.model.resultList.taxAmount) *100 / parseFloat(this.form.model.resultList.amount)
-          this.form.model.resultList.taxPriceTotal = parseFloat(this.form.model.resultList.amount) + parseFloat(this.form.model.resultList.taxAmount)
+      if (this.form.model.amount!=null && this.form.model.amount!==''){
+        if (this.form.model.taxAmount!=null && this.form.model.taxAmount!==''){
+          this.form.model.taxRate=  parseFloat(this.form.model.taxAmount) *100 / parseFloat(this.form.model.amount)
+          this.form.model.taxPriceTotal = parseFloat(this.form.model.amount) + parseFloat(this.form.model.taxAmount)
         }
       }
     },
@@ -209,15 +222,22 @@ export default {
         this.$message.error('发票号码不能为空')
       } else if (this.form.model.invoiceDate==null || this.form.model.invoiceDate===''){
         this.$message.error('发票日期不能为空')
-      } else if (this.form.model.resultList.amount==null || this.form.model.resultList.amount===''){
+      } else if (this.form.model.amount==null || this.form.model.amount===''){
         this.$message.error('不含税金额不能为空')
-      } else if (this.form.model.resultList.taxRate==null || this.form.model.resultList.taxRate===''){
+      } else if (this.form.model.taxRate==null || this.form.model.taxRate===''){
         this.$message.error('税率不能为空')
-      } else if (this.form.model.resultList.taxAmount==null || this.form.model.resultList.taxAmount===''){
+      } else if (this.form.model.taxAmount==null || this.form.model.taxAmount===''){
         this.$message.error('税额不能为空')
-      } else if (this.form.model.resultList.taxPriceTotal==null || this.form.model.resultList.taxPriceTotal===''){
+      } else if (this.form.model.taxPriceTotal==null || this.form.model.taxPriceTotal===''){
         this.$message.error('税价合计不能为空')
-      } else {
+      } else if ((this.form.model.amount-this.form.model.resultList.truthAmount).toFixed(2)>=0.01){
+        this.$message.error('不含税金额与实际不符')
+      } else if ((this.form.model.taxAmount-this.form.model.resultList.truthTaxAmount).toFixed(2)>=0.01){
+        this.$message.error('税额与实际不符')
+      } else if ((this.form.model.taxPriceTotal-this.form.model.resultList.truthTaxPriceTotal).toFixed(2)>=0.01){
+        this.$message.error('总额与实际不符')
+      }
+      else {
         this.$refs[formName].validate((valid) => {
           if (valid) {
             //传开票区间
