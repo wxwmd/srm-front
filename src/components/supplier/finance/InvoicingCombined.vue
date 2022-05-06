@@ -2,7 +2,7 @@
 
 <template>
   <div class="jz-form">
-    <el-dialog title="开票" :close-on-click-modal="false" :visible.sync="combinedTicket.combinedShow" width="1200px" destroy-on-close>
+    <el-dialog title="标准物资开票" :close-on-click-modal="false" :visible.sync="combinedTicket.combinedShow" width="1200px" destroy-on-close>
       <el-form :model="form.model" ref="form" :rules='form.formRules' label-width="0px">
         <el-form-item>
           <el-table size="small" border
@@ -43,11 +43,11 @@
 
             <el-table-column prop="withoutTaxAmount" label="不含税金额">
               <template slot-scope="scope">
-                <el-input size="small" v-model="scope.row.withoutTaxAmount"/>
+                <el-input size="small" v-model="scope.row.withoutTaxAmount"  @change="caculate1($event,scope.row)"/>
               </template>
             </el-table-column>
 
-            <el-table-column prop="withoutTaxAmount" label="税率(%)">
+            <el-table-column prop="taxRate" label="税率(%)">
               <template slot-scope="scope">
                 <el-input size="small" v-model="scope.row.taxRate" @change="caculate1($event,scope.row)"/>
               </template>
@@ -62,20 +62,6 @@
             <el-table-column prop="totalAmount" label="价税合计">
               <template slot-scope="scope">
                 <el-input size="small" v-model="scope.row.totalAmount" @change="caculate3($event,scope.row)"/>
-              </template>
-            </el-table-column>
-
-            <el-table-column label="错误信息" v-if="!this.amountcheck">
-              <template slot-scope="scope">
-                <span v-if="scope.row.amountCheck===0">
-
-                </span>
-                <span v-if="scope.row.amountCheck===1" style="color: red">
-                  金额不能为空
-                </span>
-                <span v-if="scope.row.amountCheck===2" style="color: red">
-                  税价合计不等于不含税金额加税额
-                </span>
               </template>
             </el-table-column>
 
@@ -156,7 +142,8 @@ export default {
   },
   data(){
     return{
-      amountcheck:true,
+      notNullCheck:true,
+      amountCheck:true,
       fail:false,
       visible: true,
       isAdd: false,
@@ -177,23 +164,34 @@ export default {
   methods:{
     save(formName) {
       this.$refs[formName].validate((valid) => {
-        this.amountcheck=true
+        this.notNullCheck=true
+        this.amountCheck=true
         if (valid) {
           this.form.model.splitData.forEach(item => {
-            //总金额是否填写
-            item.notOutInvoiceNumber = parseFloat(item.notOutInvoiceNumber).toFixed(0)
-            if(item.withoutTaxAmount === '' ||item.taxAmount===''||item.totalAmount===''){
-              item.amountCheck = 1
-              this.amountcheck=false
-            } else {
-              if (parseFloat(item.totalAmount)!==parseFloat(item.withoutTaxAmount)+parseFloat(item.taxAmount)){
-                item.amountCheck=2
-                this.amountcheck=false
-              }
+            // 先进行校验，看看有没有填空的地方
+            if (item.withoutTaxAmount === ''){
+              this.$message.error("不含税金额不能为空！")
+              this.notNullCheck=false
+            }
+            else if (item.taxRate === ''){
+              this.$message.error("税率不能为空！")
+              this.notNullCheck=false
+            }
+            else if (item.taxAmount === ''){
+              this.$message.error("税额不能为空！")
+              this.notNullCheck=false
+            }
+            else if (item.totalAmount === ''){
+              this.$message.error("税价合计不能为空！")
+              this.notNullCheck=false
+            }
+            else if (parseFloat(item.totalAmount)!==parseFloat(item.withoutTaxAmount)+parseFloat(item.taxAmount)){
+              this.amountCheck=false
+              this.$message.error("税价合计不等于不含税金额与税额之和！")
             }
           })
-          //金额校验成功才能开票
-          if (this.amountcheck){
+
+          if (this.notNullCheck && this.amountCheck) {
             this.$api.supplier.procurement.finance.invoicing.combined(this.form.model.splitData).then(res => {
                 if (res.code === 200){
                   if (res.data === null){
@@ -209,8 +207,6 @@ export default {
                 this.$message.error(res.code + ":" + res.msg)
               }
             })
-          } else{
-            this.$message.error("金额填写有误，请查看每行的错误信息")
           }
         }
       })
@@ -241,24 +237,25 @@ export default {
       })
     },
     caculate1(event,param){
-      if (param.withoutTaxAmount!==''){
-        if (param.taxRate !==''){
+      if (param.withoutTaxAmount!==undefined && param.withoutTaxAmount!==''){
+        console.log(param.taxRate)
+        if (param.taxRate !==undefined && param.taxRate !==''){
           param.taxAmount=parseFloat(param.withoutTaxAmount) * parseFloat(param.taxRate) /100
           param.totalAmount=parseFloat(param.withoutTaxAmount) + parseFloat(param.taxAmount)
         }
       }
     },
     caculate2(event,param){
-      if (param.withoutTaxAmount!==''){
-        if (param.taxAmount!==''){
+      if (param.withoutTaxAmount!==undefined && param.withoutTaxAmount!==''){
+        if (param.taxAmount!==undefined && param.taxAmount!==''){
           param.taxRate=parseFloat(param.taxAmount) / parseFloat(param.withoutTaxAmount) *100
           param.totalAmount=parseFloat(param.withoutTaxAmount) + parseFloat(param.taxAmount)
         }
       }
     },
     caculate3(event,param){
-      if (param.withoutTaxAmount!==''){
-        if (param.totalAmount!==''){
+      if (param.withoutTaxAmount!==undefined && param.withoutTaxAmount!==''){
+        if (param.totalAmount!==undefined && param.totalAmount!==''){
             param.taxAmount=parseFloat(param.totalAmount) - parseFloat(param.withoutTaxAmount)
             param.taxRate=parseFloat(param.taxAmount) / parseFloat(param.withoutTaxAmount) *100
         }

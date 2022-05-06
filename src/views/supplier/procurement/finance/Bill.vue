@@ -369,7 +369,7 @@ export default {
             if (valid) {
               //修改数据格式
               this.form.model.withoutTaxAmount = parseFloat(this.form.model.withoutTaxAmount).toFixed(2)
-              this.form.model.taxRate = parseFloat(this.form.model.taxRate) / 100
+
               this.form.model.taxAmount = parseFloat(this.form.model.taxAmount).toFixed(2)
               this.form.model.totalAmount = parseFloat(this.form.model.totalAmount).toFixed(2)
               this.$api.supplier.procurement.finance.bill.update(this.form.model).then(res => {
@@ -400,7 +400,6 @@ export default {
       })
     },
     calculate0(){
-      console.log('nmlgb')
       if (this.form.model.taxRate!==''){
         this.form.model.taxAmount=parseFloat(this.form.model.withoutTaxAmount) * parseFloat(this.form.model.taxRate) /100
         this.form.model.totalAmount=parseFloat(this.form.model.withoutTaxAmount) + parseFloat(this.form.model.taxAmount)
