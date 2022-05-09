@@ -230,11 +230,11 @@ export default {
         this.$message.error('税额不能为空')
       } else if (this.form.model.taxPriceTotal==null || this.form.model.taxPriceTotal===''){
         this.$message.error('税价合计不能为空')
-      } else if ((this.form.model.amount-this.form.model.resultList.truthAmount).toFixed(2)>=0.01){
+      } else if (Math.abs(this.form.model.amount-this.form.model.resultList.truthAmount).toFixed(2)>=0.01){
         this.$message.error('不含税金额与实际不符')
-      } else if ((this.form.model.taxAmount-this.form.model.resultList.truthTaxAmount).toFixed(2)>=0.01){
+      } else if (Math.abs(this.form.model.taxAmount-this.form.model.resultList.truthTaxAmount).toFixed(2)>=0.01){
         this.$message.error('税额与实际不符')
-      } else if ((this.form.model.taxPriceTotal-this.form.model.resultList.truthTaxPriceTotal).toFixed(2)>=0.01){
+      } else if (Math.abs(this.form.model.taxPriceTotal-this.form.model.resultList.truthTaxPriceTotal).toFixed(2)>=0.01){
         this.$message.error('总额与实际不符')
       }
       else {
