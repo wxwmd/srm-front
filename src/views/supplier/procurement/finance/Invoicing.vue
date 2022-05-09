@@ -116,7 +116,7 @@ export default {
     },
     clickData(row, event, column){
       if (row.freezeNumber!==0){
-        alert("冻结数量不为0！请联系管理员")
+        this.$message.error("冻结数量不为0！请联系管理员")
       }
     },
     // Freezenumber为0才可选

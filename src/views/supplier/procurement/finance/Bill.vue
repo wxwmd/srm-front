@@ -10,10 +10,10 @@
           <el-option label="已提交" value="1"></el-option>
           <el-option label="已挂账" value="2"></el-option>
         </el-select>
-        <el-select size="mini" clearable v-model="tableUtil.filter.invoiceType" placeholder="请选择发票类型">
-          <el-option label="标准物资发票" value="0"></el-option>
-          <el-option label="返利红字发票" value="1"></el-option>
-        </el-select>
+<!--        <el-select size="mini" clearable v-model="tableUtil.filter.invoiceType" placeholder="请选择发票类型">-->
+<!--          <el-option label="标准物资发票" value="0"></el-option>-->
+<!--          <el-option label="返利红字发票" value="1"></el-option>-->
+<!--        </el-select>-->
 <!--        <el-input class="jz-input" size="mini" clearable v-model="tableUtil.filter.interimInvoiceNumber"-->
 <!--                  placeholder="临时发票号"/>-->
         <el-input class="jz-input" size="mini" clearable v-model="tableUtil.filter.invoiceNumber" placeholder="发票号"/>
@@ -69,7 +69,7 @@
             <el-button size="mini" type="primary" title="审核通过" icon="el-icon-check" :disabled="scope.row.auditStatus !== 0" circle @click="audit(scope.row)" v-if="type !== 1"></el-button>
             <el-button size="mini" type="primary" title="审核不通过" icon="el-icon-close" :disabled="scope.row.auditStatus !== 0" circle @click="auditError(scope.row)" v-if="type !== 1"></el-button>
             <el-button size="mini" type="primary" title="挂账" icon="el-icon-document" :disabled="(!(scope.row.invoiceType === 1 && scope.row.invoiceStatus === 1)) && (!(scope.row.invoiceType === 0 && scope.row.invoiceStatus === 2))" circle @click="updateStatus(scope.row)" v-if="type !== 1"></el-button>
-            <el-button size="mini" type="primary" title="维护发票" icon="el-icon-edit" :disabled="scope.row.invoiceStatus === 2" circle @click="update(scope.row)" v-if="scope.row.invoiceType !== 1"></el-button>
+            <el-button size="mini" type="primary" title="维护发票" icon="el-icon-edit" circle @click="update(scope.row)" v-if="scope.row.invoiceType !== 1"></el-button>
             <el-button size="mini" type="primary" title="查看发票" icon="el-icon-view" circle @click="detail(scope.row)" ></el-button>
 <!--            <el-button size="mini" type="danger" title="废弃" icon="el-icon-delete" :disabled="scope.row.invoiceStatus !== 0" circle @click="remove(scope.row)" v-if="type === 1"></el-button>-->
           </template>
@@ -218,7 +218,7 @@ export default {
       //状态为‘暂存’和‘已提交’才可以修改
       this.form.title="发票信息维护"
       this.form.check=false
-      if (data.invoiceStatus == 0 || data.invoiceStatus == 1 || data.invoiceStatus == 2){
+      if (data.invoiceStatus == 0 || data.invoiceStatus == 1){
         this.form.model = Object.assign({}, data)
         this.$api.supplier.procurement.finance.bill.getInvoicing({interimInvoiceNumber:data.interimInvoiceNumber}).then(res => {
           if (res.code === 200){
