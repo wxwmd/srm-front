@@ -57,11 +57,11 @@
             {{scope.row.invoiceStatus === 0 ? "已提交" : (scope.row.invoiceStatus === 1 ? "已挂账" : "")}}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="90" v-if="type !== 1">
-          <template slot-scope="scope">
-            <el-button size="mini" type="primary" @click="updateStatus(scope.row)" :disabled="scope.row.invoiceStatus === 1">挂账</el-button>
-          </template>
-        </el-table-column>
+<!--        <el-table-column label="操作" width="90" v-if="type !== 1">-->
+<!--          <template slot-scope="scope">-->
+<!--            <el-button size="mini" type="primary" @click="updateStatus(scope.row)" :disabled="scope.row.invoiceStatus === 1">挂账</el-button>-->
+<!--          </template>-->
+<!--        </el-table-column>-->
         <el-table-column label="维护发票信息" width="110" v-if="type === 1">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" icon="el-icon-edit" circle @click="update(scope.row)"></el-button>

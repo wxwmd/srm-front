@@ -64,7 +64,7 @@
 <!--            {{scope.row.invoiceType === 0 ? "标准物资发票" : (scope.row.invoiceType === 1 ? "返利红字发票" : "")}}-->
 <!--          </template>-->
 <!--        </el-table-column>-->
-        <el-table-column label="操作" width="180">
+        <el-table-column label="操作" width="180" v-if="type===1">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" title="审核通过" icon="el-icon-check" :disabled="scope.row.auditStatus !== 0" circle @click="audit(scope.row)" v-if="type !== 1"></el-button>
             <el-button size="mini" type="primary" title="审核不通过" icon="el-icon-close" :disabled="scope.row.auditStatus !== 0" circle @click="auditError(scope.row)" v-if="type !== 1"></el-button>
@@ -72,6 +72,7 @@
             <el-button size="mini" type="primary" title="维护发票" icon="el-icon-edit" circle @click="update(scope.row)" v-if="scope.row.invoiceType !== 1"></el-button>
             <el-button size="mini" type="primary" title="查看发票" icon="el-icon-view" circle @click="detail(scope.row)" ></el-button>
 <!--            <el-button size="mini" type="danger" title="废弃" icon="el-icon-delete" :disabled="scope.row.invoiceStatus !== 0" circle @click="remove(scope.row)" v-if="type === 1"></el-button>-->
+            <el-button size="mini" type="danger" title="废弃" icon="el-icon-delete" circle @click="remove(scope.row)" v-if="type === 1"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -250,7 +251,7 @@ export default {
 
     remove(data){
       //状态为‘暂存’和‘已提交’才可以废弃
-      if (data.invoiceStatus === 0){
+      if (data.invoiceStatus === 0 || data.invoiceStatus===1){
         this.$confirm('确认操作, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -269,7 +270,7 @@ export default {
           })
         }).catch(() => {});
       } else {
-        this.$message.warning("只有暂存的发票才可以废弃!")
+        this.$message.warning("已挂帐的发票不可以废弃!")
       }
     },
     audit(data){

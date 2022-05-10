@@ -38,7 +38,7 @@
         <el-button type="primary" plain @click="exportData()" v-if="type === 1">导出</el-button>
 <!--        <el-button v-if="show && type === 1" type="primary" plain @click="split()">拆票</el-button>-->
 <!--        <el-button v-if="show && type === 1" type="primary" plain @click="combined()">开票</el-button>-->
-        <el-button type="primary" plain @click="combined()">开票</el-button>
+        <el-button type="primary" v-if="type === 1" plain @click="combined()">开票</el-button>
       </div>
     </div>
     <!--  Table  -->
@@ -199,7 +199,12 @@ export default {
               } else {
                 this.selectShow = false
                 this.show=true
-                this.$message.success('查询成功，请核对金额后进行开票')
+
+                if (this.type===1){
+                  this.$message.success('查询成功，请核对金额后进行开票')
+                } else {
+                  this.$message.success('查询成功')
+                }
               }
             }
           }
