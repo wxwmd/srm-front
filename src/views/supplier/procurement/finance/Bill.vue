@@ -66,12 +66,10 @@
 <!--        </el-table-column>-->
         <el-table-column label="操作" width="180" v-if="type===1">
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" title="审核通过" icon="el-icon-check" :disabled="scope.row.auditStatus !== 0" circle @click="audit(scope.row)" v-if="type !== 1"></el-button>
-            <el-button size="mini" type="primary" title="审核不通过" icon="el-icon-close" :disabled="scope.row.auditStatus !== 0" circle @click="auditError(scope.row)" v-if="type !== 1"></el-button>
-            <el-button size="mini" type="primary" title="挂账" icon="el-icon-document" :disabled="(!(scope.row.invoiceType === 1 && scope.row.invoiceStatus === 1)) && (!(scope.row.invoiceType === 0 && scope.row.invoiceStatus === 2))" circle @click="updateStatus(scope.row)" v-if="type !== 1"></el-button>
-            <el-button size="mini" type="primary" title="维护发票" icon="el-icon-edit" circle @click="update(scope.row)" v-if="scope.row.invoiceType !== 1"></el-button>
+<!--            <el-button size="mini" type="primary" title="审核通过" icon="el-icon-check" :disabled="scope.row.auditStatus !== 0" circle @click="audit(scope.row)" v-if="type !== 1"></el-button>-->
+<!--            <el-button size="mini" type="primary" title="审核不通过" icon="el-icon-close" :disabled="scope.row.auditStatus !== 0" circle @click="auditError(scope.row)" v-if="type !== 1"></el-button>-->
             <el-button size="mini" type="primary" title="查看发票" icon="el-icon-view" circle @click="detail(scope.row)" ></el-button>
-<!--            <el-button size="mini" type="danger" title="废弃" icon="el-icon-delete" :disabled="scope.row.invoiceStatus !== 0" circle @click="remove(scope.row)" v-if="type === 1"></el-button>-->
+            <el-button size="mini" type="primary" title="维护发票" icon="el-icon-edit" circle @click="update(scope.row)" v-if="scope.row.invoiceType !== 1"></el-button>
             <el-button size="mini" type="danger" title="废弃" icon="el-icon-delete" circle @click="remove(scope.row)" v-if="type === 1"></el-button>
           </template>
         </el-table-column>
