@@ -114,9 +114,9 @@
               <el-input class="jz-input" v-model="form.model.taxPriceTotal"/>
             </el-form-item>
           </el-form-item>
-          <el-form-item label="折扣原因" prop="discountCause" style="width: 50%">
-            <el-input class="jz-input" v-model="form.model.discountCause"/>
-          </el-form-item>
+<!--          <el-form-item label="折扣原因" prop="discountCause" style="width: 50%">-->
+<!--            <el-input class="jz-input" v-model="form.model.discountCause"/>-->
+<!--          </el-form-item>-->
         </el-form>
         <div class="jz-form-btn" v-if="!form.check">
           <el-button type="primary" plain @click="save('form')">提 交</el-button>
