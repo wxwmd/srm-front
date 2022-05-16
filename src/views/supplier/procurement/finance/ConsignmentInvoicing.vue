@@ -57,33 +57,10 @@
                 border
                 size="mini"
                 :header-cell-style="{background:'#f9f9f9'}"
-                :data="tableUtil.table.tableData"
+                :data="tableUtil.table.tableData.slice(10*tableUtil.filter.page-10,10*tableUtil.filter.page)"
                 ref="multipleTable"
                 style="width:100%">
         <el-table-column v-if="selectShow && type === 1" type="selection" width="55"/>
-<!--        <el-table-column type="index" width="50"/>-->
-<!--        <el-table-column prop="supplierCode" v-if="this.$store.state.user.type !== 1" label="供应商编码" width="150"/>-->
-<!--        <el-table-column prop="materialNumber" label="物料号" width="100"/>-->
-<!--        <el-table-column prop="materialName" label="物料名称" width="130"/>-->
-<!--        <el-table-column prop="purchaseOrder" label="采购订单" width="100"/>-->
-<!--        <el-table-column prop="plant" label="工厂" width="120"/>-->
-<!--        <el-table-column prop="materialDescribe" label="物料描述" width="150"/>-->
-<!--        <el-table-column prop="invoiceGroup" label="发票组"/>-->
-<!--        <el-table-column prop="temporalInterval" label="日期" width="90"/>-->
-<!--        <el-table-column prop="amount" label="不含税金额" width="90"/>-->
-<!--        <el-table-column prop="taxRate" label="税率（%）"/>-->
-<!--&lt;!&ndash;        <el-table-column prop="material" label="物料"/>&ndash;&gt;-->
-<!--        <el-table-column prop="taxPriceTotal" label="税价合计"/>-->
-<!--        <el-table-column prop="unitPrice" label="单价"/>-->
-<!--        <el-table-column prop="quantity" label="数量"/>-->
-<!--        <el-table-column prop="aggregateAmount" label="总金额"/>-->
-<!--        <el-table-column prop="notOutInvoiceNumber" label="未开票数量" width="90"/>-->
-<!--        <el-table-column prop="status" label="状态">-->
-<!--          <template slot-scope="scope">-->
-<!--            {{scope.row.status === -1 ? "未开票" : (scope.row.status === 0 ? "已提交" : (scope.row.status === 1 ? "已挂账" : ""))}}-->
-<!--          </template>-->
-<!--        </el-table-column>-->
-
         <el-table-column type="index" width="50"/>
         <el-table-column prop="supplierCode" label="供应商编码" width="250"/>
         <el-table-column prop="supplierName" label="供应商名称" width="350"/>
@@ -99,7 +76,7 @@
     <div class="jz-module-pagination">
       <el-pagination @size-change="pageSizeChange"
                      @current-change="pageCurrentChange"
-                     :page-size="10000000"
+                     :page-size="10"
                      layout="total, prev, pager, next, jumper"
                      :total="tableUtil.table.total">
       </el-pagination>
@@ -126,7 +103,7 @@ export default {
         //   page: 1
         // },
         filter:{
-          limit:10000000,
+          limit:10,
           page:1
         },
         table: {
@@ -158,11 +135,11 @@ export default {
   methods: {
     pageSizeChange(limit) {
       this.tableUtil.filter.limit = limit;
-      this.initTable()
+      //this.initTable()
     },
     pageCurrentChange(page) {
       this.tableUtil.filter.page = page;
-      this.initTable()
+      //this.initTable()
     },
     doSearch() {
       if (this.tableUtil.filter.startTime==null || this.tableUtil.filter.endTime==null){
@@ -179,11 +156,11 @@ export default {
       // 初始化表
       this.$api.supplier.procurement.finance.consignmentInvoicing.getAll(this.tableUtil.filter).then(res => {
         if (res.code === 200) {
-          this.tableUtil.table.tableData = res.data.records[0].consignmentSalesInvoiceOuts
-          this.tableUtil.table.total = res.data.total
-          if (res.data.records[0].resultList !== undefined && res.data.records[0].resultList !== null){
-            if (res.data.records[0].resultList.length > 0){
-              this.resultList = res.data.records[0].resultList
+          this.tableUtil.table.tableData = res.data.consignmentSalesInvoiceOuts
+          this.tableUtil.table.total = res.data.consignmentSalesInvoiceOuts.length
+          if (res.data.resultList !== undefined && res.data.resultList !== null){
+            if (res.data.resultList.length > 0){
+              this.resultList = res.data.resultList
               // if (this.resultList[0] > this.$store.state.user.quota){
               //
               //   this.$alert('不含税总金额大于限额，请分开进行开票', '', {

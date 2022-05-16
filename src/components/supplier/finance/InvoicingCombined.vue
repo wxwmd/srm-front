@@ -163,36 +163,41 @@ export default {
   },
   methods:{
     save(formName) {
-      this.$refs[formName].validate((valid) => {
-        this.notNullCheck=true
-        this.amountCheck=true
-        if (valid) {
-          this.form.model.splitData.forEach(item => {
-            // 先进行校验，看看有没有填空的地方
-            if (item.withoutTaxAmount === ''){
-              this.$message.error("不含税金额不能为空！")
-              this.notNullCheck=false
-            }
-            else if (item.taxRate === ''){
-              this.$message.error("税率不能为空！")
-              this.notNullCheck=false
-            }
-            else if (item.taxAmount === ''){
-              this.$message.error("税额不能为空！")
-              this.notNullCheck=false
-            }
-            else if (item.totalAmount === ''){
-              this.$message.error("税价合计不能为空！")
-              this.notNullCheck=false
-            }
-            else if (parseFloat(item.totalAmount)!==parseFloat(item.withoutTaxAmount)+parseFloat(item.taxAmount)){
-              this.amountCheck=false
-              this.$message.error("税价合计不等于不含税金额与税额之和！")
-            }
-          })
+      this.$confirm('确认操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$refs[formName].validate((valid) => {
+          this.notNullCheck=true
+          this.amountCheck=true
+          if (valid) {
+            this.form.model.splitData.forEach(item => {
+              // 先进行校验，看看有没有填空的地方
+              if (item.withoutTaxAmount === ''){
+                this.$message.error("不含税金额不能为空！")
+                this.notNullCheck=false
+              }
+              else if (item.taxRate === ''){
+                this.$message.error("税率不能为空！")
+                this.notNullCheck=false
+              }
+              else if (item.taxAmount === ''){
+                this.$message.error("税额不能为空！")
+                this.notNullCheck=false
+              }
+              else if (item.totalAmount === ''){
+                this.$message.error("税价合计不能为空！")
+                this.notNullCheck=false
+              }
+              else if (parseFloat(item.totalAmount)!==parseFloat(item.withoutTaxAmount)+parseFloat(item.taxAmount)){
+                this.amountCheck=false
+                this.$message.error("税价合计不等于不含税金额与税额之和！")
+              }
+            })
 
-          if (this.notNullCheck && this.amountCheck) {
-            this.$api.supplier.procurement.finance.invoicing.combined(this.form.model.splitData).then(res => {
+            if (this.notNullCheck && this.amountCheck) {
+              this.$api.supplier.procurement.finance.invoicing.combined(this.form.model.splitData).then(res => {
                 if (res.code === 200){
                   if (res.data === null){
                     this.$parent.tableUtil.initTable()
@@ -203,13 +208,14 @@ export default {
                     this.fail=true
                   }
                 } else {
-                this.fail=true
-                this.$message.error(res.code + ":" + res.msg)
-              }
-            })
+                  this.fail=true
+                  this.$message.error(res.code + ":" + res.msg)
+                }
+              })
+            }
           }
-        }
-      })
+        })
+      }).catch(() => {});
     },
     check(formName) {
       this.$refs[formName].validate((valid) => {

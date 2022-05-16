@@ -1,3 +1,5 @@
+<!--标准物资发票查询-->
+
 <template>
   <div class="jz-supplier-container">
     <!--  ToolBar  -->
@@ -149,7 +151,7 @@
             <el-table-column prop="materialVoucher" label="物料凭证"/>
             <el-table-column prop="voucherProject" label="凭证项目"/>
             <el-table-column prop="material" label="物料"/>
-            <el-table-column prop="materialDescribe" label="物料描述"/>
+            <el-table-column prop="materialName" label="物料名称"/>
             <el-table-column prop="hongProject" label="行项目"/>
 <!--            <el-table-column prop="notOutInvoiceNumber" label="未开票数量"/>-->
           </el-table>
@@ -222,6 +224,7 @@ export default {
         this.$api.supplier.procurement.finance.bill.getInvoicing({interimInvoiceNumber:data.interimInvoiceNumber}).then(res => {
           if (res.code === 200){
             this.InvoicingData = res.data.records
+            console.log(this.InvoicingData)
             this.form.visible = true
           } else {
             this.$message.error(res.code + ':' + res.msg)
@@ -362,31 +365,37 @@ export default {
     //   }
     // },
     save(formName) {
-      if (this.type === 1){
-        if (this.form.model.invoiceStatus === 0 || this.form.model.invoiceStatus === 1){
-          this.$refs[formName].validate((valid) => {
-            if (valid) {
-              //修改数据格式
-              this.form.model.withoutTaxAmount = parseFloat(this.form.model.withoutTaxAmount).toFixed(2)
+      this.$confirm('确认操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        if (this.type === 1){
+          if (this.form.model.invoiceStatus === 0 || this.form.model.invoiceStatus === 1){
+            this.$refs[formName].validate((valid) => {
+              if (valid) {
+                //修改数据格式
+                this.form.model.withoutTaxAmount = parseFloat(this.form.model.withoutTaxAmount).toFixed(2)
 
-              this.form.model.taxAmount = parseFloat(this.form.model.taxAmount).toFixed(2)
-              this.form.model.totalAmount = parseFloat(this.form.model.totalAmount).toFixed(2)
-              this.$api.supplier.procurement.finance.bill.update(this.form.model).then(res => {
-                if (res.code === 200){
-                  this.tableUtil.initTable()
-                  this.form.visible = false
-                } else {
-                  this.$message.error(res.code + ":" + res.msg)
-                }
-              })
-            }
-          })
+                this.form.model.taxAmount = parseFloat(this.form.model.taxAmount).toFixed(2)
+                this.form.model.totalAmount = parseFloat(this.form.model.totalAmount).toFixed(2)
+                this.$api.supplier.procurement.finance.bill.update(this.form.model).then(res => {
+                  if (res.code === 200){
+                    this.tableUtil.initTable()
+                    this.form.visible = false
+                  } else {
+                    this.$message.error(res.code + ":" + res.msg)
+                  }
+                })
+              }
+            })
+          } else {
+            this.$message.warning("当前发票状态不可修改")
+          }
         } else {
-          this.$message.warning("当前发票状态不可修改")
+          this.$message.warning("只有供应商才可以维护发票，企业人员只能查看")
         }
-      } else {
-        this.$message.warning("只有供应商才可以维护发票，企业人员只能查看")
-      }
+      }).catch(() => {});
     },
     beforeClose(done) {
       this.cleanVerifyMessage()
@@ -412,11 +421,10 @@ export default {
       this.form.model.taxRate=parseFloat(this.form.model.taxAmount) / parseFloat(this.form.model.withoutTaxAmount) *100
       this.form.model.totalAmount=parseFloat(this.form.model.withoutTaxAmount) + parseFloat(this.form.model.taxAmount)
     },
-    calculate3(event,param){
+    calculate3(){
       this.form.model.taxAmount=parseFloat(this.form.model.totalAmount) - parseFloat(this.form.model.withoutTaxAmount)
       this.form.model.taxRate=parseFloat(this.form.model.taxAmount) / parseFloat(this.form.model.withoutTaxAmount) *100
     }
-
 }
 }
 </script>

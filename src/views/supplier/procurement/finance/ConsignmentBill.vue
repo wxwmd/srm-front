@@ -132,7 +132,7 @@
             <el-table-column type="index" width="50"/>
             <el-table-column prop="purchaseOrder" label="采购订单"/>
             <el-table-column prop="materialNumber" label="物料"/>
-            <el-table-column prop="materialDescribe" label="物料描述"/>
+            <el-table-column prop="materialName" label="物料名称"/>
             <el-table-column prop="quantity" label="数量"/>
           </el-table>
         </div>
@@ -272,20 +272,26 @@ export default {
       })
     },
     save(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          //修改数据格式
-          this.$api.supplier.procurement.finance.consignmentBill.update(this.form.model).then(res => {
-            if (res.code === 200){
-              this.tableUtil.initTable()
-              this.tableUtil.initTable()
-              this.form.visible = false
-            } else {
-              this.$message.error(res.code + ":" + res.msg)
-            }
-          })
-        }
-      })
+      this.$confirm('确认操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            //修改数据格式
+            this.$api.supplier.procurement.finance.consignmentBill.update(this.form.model).then(res => {
+              if (res.code === 200){
+                this.tableUtil.initTable()
+                this.tableUtil.initTable()
+                this.form.visible = false
+              } else {
+                this.$message.error(res.code + ":" + res.msg)
+              }
+            })
+          }
+        })
+      }).catch(() => {});
     },
     beforeClose(done) {
       this.cleanVerifyMessage()
