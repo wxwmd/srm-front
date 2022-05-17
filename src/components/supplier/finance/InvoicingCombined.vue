@@ -49,19 +49,19 @@
 
             <el-table-column prop="taxRate" label="税率(%)">
               <template slot-scope="scope">
-                <el-input size="small" v-model="scope.row.taxRate" @change="caculate1($event,scope.row)"/>
+                <el-input size="small" v-model="scope.row.taxRate"/>
               </template>
             </el-table-column>
 
             <el-table-column prop="taxAmount" label="税额">
               <template slot-scope="scope">
-                <el-input size="small" v-model="scope.row.taxAmount" @change="caculate2($event,scope.row)"/>
+                <el-input size="small" v-model="scope.row.taxAmount"/>
               </template>
             </el-table-column>
 
             <el-table-column prop="totalAmount" label="价税合计">
               <template slot-scope="scope">
-                <el-input size="small" v-model="scope.row.totalAmount" @change="caculate3($event,scope.row)"/>
+                <el-input size="small" v-model="scope.row.totalAmount"/>
               </template>
             </el-table-column>
 
@@ -242,31 +242,6 @@ export default {
         this.$refs['form'].resetFields()
       })
     },
-    caculate1(event,param){
-      if (param.withoutTaxAmount!==undefined && param.withoutTaxAmount!==''){
-        console.log(param.taxRate)
-        if (param.taxRate !==undefined && param.taxRate !==''){
-          param.taxAmount=parseFloat(param.withoutTaxAmount) * parseFloat(param.taxRate) /100
-          param.totalAmount=parseFloat(param.withoutTaxAmount) + parseFloat(param.taxAmount)
-        }
-      }
-    },
-    caculate2(event,param){
-      if (param.withoutTaxAmount!==undefined && param.withoutTaxAmount!==''){
-        if (param.taxAmount!==undefined && param.taxAmount!==''){
-          param.taxRate=parseFloat(param.taxAmount) / parseFloat(param.withoutTaxAmount) *100
-          param.totalAmount=parseFloat(param.withoutTaxAmount) + parseFloat(param.taxAmount)
-        }
-      }
-    },
-    caculate3(event,param){
-      if (param.withoutTaxAmount!==undefined && param.withoutTaxAmount!==''){
-        if (param.totalAmount!==undefined && param.totalAmount!==''){
-            param.taxAmount=parseFloat(param.totalAmount) - parseFloat(param.withoutTaxAmount)
-            param.taxRate=parseFloat(param.taxAmount) / parseFloat(param.withoutTaxAmount) *100
-        }
-      }
-    }
   }
 }
 </script>

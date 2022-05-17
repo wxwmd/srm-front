@@ -285,6 +285,7 @@ export default {
                 this.tableUtil.initTable()
                 this.tableUtil.initTable()
                 this.form.visible = false
+                this.$message.success("发票信息维护成功")
               } else {
                 this.$message.error(res.code + ":" + res.msg)
               }

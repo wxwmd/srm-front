@@ -36,8 +36,6 @@
       <div>
         <button class="jz-btn" @click="doSearch()" style="margin-right: 10px">查询</button>
         <el-button type="primary" plain @click="exportData()" v-if="type === 1">导出</el-button>
-<!--        <el-button v-if="show && type === 1" type="primary" plain @click="split()">拆票</el-button>-->
-<!--        <el-button v-if="show && type === 1" type="primary" plain @click="combined()">开票</el-button>-->
         <el-button type="primary" v-if="type === 1" plain @click="combined()">开票</el-button>
       </div>
     </div>
@@ -81,19 +79,17 @@
                      :total="tableUtil.table.total">
       </el-pagination>
     </div>
-    <consignment-split v-if="splitTicket.isSplit" :splitTicket="splitTicket" @getIsSplit = "getSplit($event)"></consignment-split>
     <consignment-combined v-if="combinedTicket.isCombined" :combinedTicket="combinedTicket" @getIsCombined = "getCombined($event)"></consignment-combined>
   </div>
 </template>
 
 <script>
 import TableUtil from '@/assets/supplier/js/TableUtil'
-import ConsignmentSplit from '@/components/supplier/finance/consignmentSplit'
 import ConsignmentCombined from '@/components/supplier/finance/consignmentCombined'
 
 export default {
   name: "ConsignmentInvoicing",
-  components:{ConsignmentSplit,ConsignmentCombined},
+  components:{ConsignmentCombined},
   data() {
     return {
       type:this.$store.state.user.type,

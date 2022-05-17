@@ -56,20 +56,8 @@
           </template>
         </el-table-column>
         <el-table-column prop="onAccountDate" label="挂账日期"/>
-<!--        <el-table-column prop="auditStatus" label="审核状态" v-if="type === 1" width="170">-->
-<!--          <template slot-scope="scope">-->
-<!--            {{scope.row.auditStatus === 0 ? "未审核" : (scope.row.auditStatus === 1 ? "审核不通过，请废弃此发票" : (scope.row.auditStatus === 2 ? "审核通过" : ""))}}-->
-<!--          </template>-->
-<!--        </el-table-column>-->
-<!--        <el-table-column prop="invoiceStatus" label="发票类型">-->
-<!--          <template slot-scope="scope">-->
-<!--            {{scope.row.invoiceType === 0 ? "标准物资发票" : (scope.row.invoiceType === 1 ? "返利红字发票" : "")}}-->
-<!--          </template>-->
-<!--        </el-table-column>-->
         <el-table-column label="操作" width="180" v-if="type===1">
           <template slot-scope="scope">
-<!--            <el-button size="mini" type="primary" title="审核通过" icon="el-icon-check" :disabled="scope.row.auditStatus !== 0" circle @click="audit(scope.row)" v-if="type !== 1"></el-button>-->
-<!--            <el-button size="mini" type="primary" title="审核不通过" icon="el-icon-close" :disabled="scope.row.auditStatus !== 0" circle @click="auditError(scope.row)" v-if="type !== 1"></el-button>-->
             <el-button size="mini" type="primary" title="查看发票" icon="el-icon-view" circle @click="detail(scope.row)" ></el-button>
             <el-button size="mini" type="primary" title="维护发票" icon="el-icon-edit" circle @click="update(scope.row)" v-if="scope.row.invoiceType !== 1"></el-button>
             <el-button size="mini" type="danger" title="废弃" icon="el-icon-delete" circle @click="remove(scope.row)" v-if="type === 1"></el-button>
@@ -116,18 +104,18 @@
           </el-form-item>
           <el-form-item class="jz-from-flex" label-width="0">
             <el-form-item label="不含税总金额" prop="withoutTaxAmount" style="width: 25%">
-              <el-input class="jz-input" v-model="form.model.withoutTaxAmount" @change="calculate0"/>
+              <el-input class="jz-input" v-model="form.model.withoutTaxAmount"/>
             </el-form-item>
             <el-form-item label="税率" prop="taxRate" style="width: 25%">
-              <el-input class="jz-input" v-model="form.model.taxRate" @change="calculate1" >
+              <el-input class="jz-input" v-model="form.model.taxRate" >
                 <template slot="append" >%</template>
               </el-input>
             </el-form-item>
             <el-form-item label="税额" prop="taxAmount" style="width: 25%">
-              <el-input class="jz-input" v-model="form.model.taxAmount" @change="calculate2"/>
+              <el-input class="jz-input" v-model="form.model.taxAmount"/>
             </el-form-item>
             <el-form-item label="税价合计" prop="totalAmount" style="width: 25%">
-              <el-input class="jz-input" v-model="form.model.totalAmount" @change="calculate3"/>
+              <el-input class="jz-input" v-model="form.model.totalAmount"/>
             </el-form-item>
           </el-form-item>
 <!--          <el-form-item label="折扣原因" prop="discountCause" style="width: 50%">-->
@@ -383,6 +371,7 @@ export default {
                   if (res.code === 200){
                     this.tableUtil.initTable()
                     this.form.visible = false
+                    this.$message.success("发票信息维护成功")
                   } else {
                     this.$message.error(res.code + ":" + res.msg)
                   }
@@ -406,24 +395,6 @@ export default {
       this.$nextTick(() => {
         this.$refs['form'].resetFields()
       })
-    },
-    calculate0(){
-      if (this.form.model.taxRate!==''){
-        this.form.model.taxAmount=parseFloat(this.form.model.withoutTaxAmount) * parseFloat(this.form.model.taxRate) /100
-        this.form.model.totalAmount=parseFloat(this.form.model.withoutTaxAmount) + parseFloat(this.form.model.taxAmount)
-      }
-    },
-    calculate1(){
-      this.form.model.taxAmount=parseFloat(this.form.model.withoutTaxAmount) * parseFloat(this.form.model.taxRate) /100
-      this.form.model.totalAmount=parseFloat(this.form.model.withoutTaxAmount) + parseFloat(this.form.model.taxAmount)
-    },
-    calculate2(){
-      this.form.model.taxRate=parseFloat(this.form.model.taxAmount) / parseFloat(this.form.model.withoutTaxAmount) *100
-      this.form.model.totalAmount=parseFloat(this.form.model.withoutTaxAmount) + parseFloat(this.form.model.taxAmount)
-    },
-    calculate3(){
-      this.form.model.taxAmount=parseFloat(this.form.model.totalAmount) - parseFloat(this.form.model.withoutTaxAmount)
-      this.form.model.taxRate=parseFloat(this.form.model.taxAmount) / parseFloat(this.form.model.withoutTaxAmount) *100
     }
 }
 }

@@ -2,45 +2,61 @@
 
 <template>
   <div class="jz-form">
-    <el-dialog title="寄售物资开票" :close-on-click-modal="false" :visible.sync="combinedTicket.isCombined" width="1200px" destroy-on-close>
-      <el-form :model="form.model" ref="form" :rules='form.formRules' label-width="100px">
-<!--        <el-form :model="form.model" ref="form" :rules='formRules' label-width="100px">-->
-        <el-form-item class="jz-from-flex" label-width="0">
+    <el-dialog title="寄售物资开票" :close-on-click-modal="false" :visible.sync="combinedTicket.isCombined" width="1250px" destroy-on-close>
 
-          <el-form-item label="发票代码" prop="invoiceCode" style="width: 50%">
-            <el-input class="jz-input" onkeyup="value=value.replace(/[\u4E00-\u9FA5]/g,'')" v-model="form.model.invoiceCode"/>
-          </el-form-item>
+        <div v-for="(item,index) in this.form.model.resultList" :key="index" style="margin-top: 10px;margin-bottom: 10px">
 
-          <el-form-item label="发票号" prop="invoiceNumber" style="width: 25%">
-            <el-input class="jz-input" onkeyup="value=value.replace(/[\u4E00-\u9FA5]/g,'')" v-model="form.model.invoiceNumber"/>
-          </el-form-item>
+          <el-form :model="form.model" ref="form"  label-width="100px"  style="border:1px solid #CBD0CC;border-radius:2px;margin-top:20px;padding-top: 10px;padding-right: 10px">
 
-          <el-form-item label="发票日期" prop="invoiceDate" style="width: 25%">
-            <el-date-picker
-              value-format="yyyy-MM-dd"
-              v-model="form.model.invoiceDate"
-              type="date"
-              placeholder="发票日期">
-            </el-date-picker>
-          </el-form-item>
-        </el-form-item>
+            <el-form-item class="jz-from-flex" label-width="0">
 
-        <el-form-item class="jz-from-flex" label-width="0">
-          <el-form-item label="不含税金额" prop="amount" style="width: 25%">
-            <el-input class="jz-input" @change="calculate0()" v-model="form.model.amount"/>
-          </el-form-item>
+              <el-form-item label="开票区间" style="width: 25%">
+                <el-input class="jz-input" onkeyup="value=value.replace(/[\u4E00-\u9FA5]/g,'')" v-model="item.outInvoicePeriod" :disabled="true"/>
+              </el-form-item>
 
-          <el-form-item label="税率(%)" prop="taxRate" style="width: 25%">
-            <el-input class="jz-input"  @change="calculate1()" v-model="form.model.taxRate"/>
-          </el-form-item>
-          <el-form-item label="税额" prop="taxAmount" style="width: 25%">
-            <el-input class="jz-input"  @change="calculate2()" v-model="form.model.taxAmount"/>
-          </el-form-item>
-          <el-form-item label="税价合计" prop="taxPriceTotal" style="width: 25%">
-            <el-input class="jz-input"  v-model="form.model.taxPriceTotal"/>
-          </el-form-item>
-        </el-form-item>
-<!--        -->
+              <el-form-item label="发票代码" prop="invoiceCode" style="width: 25%">
+                <el-input class="jz-input" onkeyup="value=value.replace(/[\u4E00-\u9FA5]/g,'')" v-model="item.invoiceCode"/>
+              </el-form-item>
+
+              <el-form-item label="发票号" prop="invoiceNumber" style="width: 25%">
+                <el-input class="jz-input" onkeyup="value=value.replace(/[\u4E00-\u9FA5]/g,'')" v-model="item.invoiceNumber"/>
+              </el-form-item>
+
+              <el-form-item label="发票日期" prop="invoiceDate" style="width: 25%">
+                <el-date-picker
+                    value-format="yyyy-MM-dd"
+                    v-model="item.invoiceDate"
+                    type="date"
+                    placeholder="发票日期">
+                </el-date-picker>
+              </el-form-item>
+            </el-form-item>
+
+            <el-form-item class="jz-from-flex" label-width="0">
+              <el-form-item label="不含税金额" prop="amount" style="width: 25%">
+                <el-input class="jz-input" v-model="item.inputAmount"/>
+              </el-form-item>
+
+              <el-form-item label="税率(%)" prop="taxRate" style="width: 25%">
+                <el-input class="jz-input"   v-model="item.inputTaxRate"/>
+              </el-form-item>
+              <el-form-item label="税额" prop="taxAmount" style="width: 25%">
+                <el-input class="jz-input"   v-model="item.inputTaxAmount"/>
+              </el-form-item>
+              <el-form-item label="税价合计" prop="taxPriceTotal" style="width: 25%">
+                <el-input class="jz-input"  v-model="item.inputTaxPriceTotal"/>
+              </el-form-item>
+            </el-form-item>
+          </el-form>
+
+        </div>
+
+
+      <div class="jz-form-btn">
+        <el-button type="primary" plain @click="save('form')">确 定</el-button>
+      </div>
+
+<!--      <el-form :model="form.model" ref="form" :rules='form.formRules' label-width="100px" style="margin-top: 20px">-->
 <!--        <el-form-item>-->
 <!--          <el-table size="small" border-->
 <!--                    row-class-name="jz-table-row"-->
@@ -71,43 +87,9 @@
 <!--            </el-table-column>-->
 <!--          </el-table>-->
 <!--        </el-form-item>-->
-      </el-form>
-      <div class="jz-form-btn">
-        <el-button type="primary" plain @click="save('form')">确 定</el-button>
-      </div>
+<!--      </el-form>-->
 
-      <el-form :model="form.model" ref="form" :rules='form.formRules' label-width="100px" style="margin-top: 20px">
-        <el-form-item>
-          <el-table size="small" border
-                    row-class-name="jz-table-row"
-                    cell-class-name="jz-table-cell"
-                    :data="form.model.combinedData"
-                    :header-cell-style="{background:'#f6f6f6'}"
-                    style="width:100%">
-            <el-table-column type="index" width="50"/>
-            <el-table-column prop="purchaseOrder" label="订单号">
-              <template slot-scope="scope">
-                <span>{{scope.row.purchaseOrder}}</span>
-              </template>
-            </el-table-column>
-            <el-table-column prop="materialNumber" label="物料">
-              <template slot-scope="scope">
-                <span>{{scope.row.materialNumber}}</span>
-              </template>
-            </el-table-column>
-            <el-table-column prop="materialDescribe" label="物料描述">
-              <template slot-scope="scope">
-                <span>{{scope.row.materialDescribe}}</span>
-              </template>
-            </el-table-column>
-            <el-table-column prop="quantity" label="数量">
-              <template slot-scope="scope">
-                <span>{{scope.row.quantity}}</span>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-form-item>
-      </el-form>
+
     </el-dialog>
   </div>
 </template>
@@ -124,44 +106,8 @@ export default {
       isAdd: false,
       form: {
         model: {
-          amount:'',
-          taxRate:'',
-          taxAmount:'',
-          taxPriceTotal:'',
-          resultList:{
-            // amount:'', // 用户输入的不含税价格
-            // taxRate:'',
-            // taxAmount:'',
-            // taxPriceTotal:'',
-            truthAmount:0, // 真实的不含税价格
-            truthTaxRate:0,
-            truthTaxAmount:0,
-            truthTaxPriceTotal:0
-          },
-          combinedData: [],
-        },
-        formRules: {
-          invoiceCode:[
-            {required: true, message: '发票代码不能为空', trigger: 'blur'}
-          ],
-          invoiceNumber:[
-            {required: true, message: '发票号不能为空', trigger: 'blur'}
-          ],
-          invoiceDate:[
-            {required: true, message: '发票日期不能为空', trigger: 'blur'}
-          ],
-          amount:[
-            {required: true, message: '不含税总金额不能为空', trigger: 'blur'}
-          ],
-          taxRate:[
-            {required: true, message: '税率不能为空', trigger: 'blur'}
-          ],
-          taxAmount:[
-            {required: true, message: '税额不能为空', trigger: 'blur'}
-          ],
-          taxPriceTotal:[
-            {required: true, message: '税价合计不能为空', trigger: 'blur'}
-          ]
+          resultList:[],
+          invoiceOuts: [],
         },
       },
       idList:[]
@@ -173,87 +119,74 @@ export default {
   methods: {
     //获取选中数据
     getData(){
+      // 得到有几张发票，每张发票对应的钱
       this.combinedTicket.combinedList.forEach(item => {
         this.idList.push(item.id)
-        this.form.model.combinedData.push({id:item.id,purchaseOrder:item.purchaseOrder,materialNumber:item.materialNumber,materialDescribe:item.materialDescribe,quantity:item.quantity})
+        this.form.model.invoiceOuts.push(item)
+        console.log(item)
       })
 
       //计算选中数据的总额
       this.$api.supplier.procurement.finance.consignmentInvoicing.getTotal({ids: this.idList}).then(res => {
         if (res.code === 200){
-          this.form.model.resultList.truthAmount = res.data[0]
-          this.form.model.resultList.truthTaxAmount = res.data[1]
-          this.form.model.resultList.truthTaxPriceTotal = res.data[2]
-          this.form.model.resultList.truthTaxRate=res.data[3]
+          // this.form.model.resultList.truthAmount = res.data[0]
+          // this.form.model.resultList.truthTaxAmount = res.data[1]
+          // this.form.model.resultList.truthTaxPriceTotal = res.data[2]
+          // this.form.model.resultList.truthTaxRate=res.data[3]
+          this.form.model.resultList = res.data
         } else {
           this.$message.error(res.code + ':' + res.msg)
         }
       })
     },
-    //计算
-    calculate0(){
-      if (this.form.model.amount!=null && this.form.model.amount!==''){
-        if (this.form.model.taxRate!=null && this.form.model.taxRate!==''){
-          this.form.model.taxAmount = parseFloat(this.form.model.amount) * parseFloat(this.form.model.taxRate) / 100
-          this.form.model.taxPriceTotal = parseFloat(this.form.model.amount) + parseFloat(this.form.model.taxAmount)
-        }
-      }
-    },
-    calculate1(){
-      if (this.form.model.amount!=null && this.form.model.amount!==''){
-        if (this.form.model.taxRate!=null && this.form.model.taxRate!==''){
-          this.form.model.taxAmount = parseFloat(this.form.model.amount) * parseFloat(this.form.model.taxRate) / 100
-          this.form.model.taxPriceTotal = parseFloat(this.form.model.amount) + parseFloat(this.form.model.taxAmount)
-        }
-      }
-    },
-    calculate2(){
-      if (this.form.model.amount!=null && this.form.model.amount!==''){
-        if (this.form.model.taxAmount!=null && this.form.model.taxAmount!==''){
-          this.form.model.taxRate=  parseFloat(this.form.model.taxAmount) *100 / parseFloat(this.form.model.amount)
-          this.form.model.taxPriceTotal = parseFloat(this.form.model.amount) + parseFloat(this.form.model.taxAmount)
-        }
-      }
-    },
     save(formName){
-      if (this.form.model.invoiceCode==null || this.form.model.invoiceCode===''){
-        this.$message.error('发票代码不能为空')
-      } else if (this.form.model.invoiceNumber==null || this.form.model.invoiceNumber===''){
-        this.$message.error('发票号码不能为空')
-      } else if (this.form.model.invoiceDate==null || this.form.model.invoiceDate===''){
-        this.$message.error('发票日期不能为空')
-      } else if (this.form.model.amount==null || this.form.model.amount===''){
-        this.$message.error('不含税金额不能为空')
-      } else if (this.form.model.taxRate==null || this.form.model.taxRate===''){
-        this.$message.error('税率不能为空')
-      } else if (this.form.model.taxAmount==null || this.form.model.taxAmount===''){
-        this.$message.error('税额不能为空')
-      } else if (this.form.model.taxPriceTotal==null || this.form.model.taxPriceTotal===''){
-        this.$message.error('税价合计不能为空')
-      } else if (Math.abs(this.form.model.amount-this.form.model.resultList.truthAmount).toFixed(2)>=0.01){
-        this.$message.error('不含税金额与实际不符')
-      } else if (Math.abs(this.form.model.taxAmount-this.form.model.resultList.truthTaxAmount).toFixed(2)>=0.01){
-        this.$message.error('税额与实际不符')
-      } else if (Math.abs(this.form.model.taxPriceTotal-this.form.model.resultList.truthTaxPriceTotal).toFixed(2)>=0.01){
-        this.$message.error('总额与实际不符')
-      }
-      else {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            //传开票区间
-            this.form.model.outInvoicePeriod = this.combinedTicket.combinedList[0].outInvoicePeriod
-            //开票
-            this.$api.supplier.procurement.finance.consignmentInvoicing.consignmentCombined(this.form.model).then(res => {
-              if (res.code === 200){
-                this.$parent.doSearch()
-                this.combinedTicket.isCombined = false
-              } else {
-                this.$message.error(res.code + ':' + res.msg)
-              }
-            })
+      this.form.model.resultList.forEach(item=>{
+        console.log(formName)
+        if (item.invoiceCode==null || item.invoiceCode===''){
+          this.$message.error('发票代码不能为空')
+        } else if (item.invoiceNumber==null || item.invoiceNumber===''){
+          this.$message.error('发票号码不能为空')
+        } else if (item.invoiceDate==null || item.invoiceDate===''){
+          this.$message.error('发票日期不能为空')
+        } else if (item.inputAmount==null || item.inputAmount===''){
+          this.$message.error('不含税金额不能为空')
+        } else if (item.inputTaxRate==null || item.inputTaxRate===''){
+          this.$message.error('税率不能为空')
+        } else if (item.inputTaxAmount==null || item.inputTaxAmount===''){
+          this.$message.error('税额不能为空')
+        } else if (item.inputTaxPriceTotal==null || item.inputTaxPriceTotal===''){
+          this.$message.error('税价合计不能为空')
+        } else if (Math.abs(item.amount-item.inputAmount).toFixed(2)>=0.01){
+          this.$message.error('不含税金额与实际不符')
+        } else if (Math.abs(item.taxAmount-item.inputTaxAmount).toFixed(2)>=0.01){
+          this.$message.error('税额与实际不符')
+        } else if (Math.abs(item.taxPriceTotal-item.inputTaxPriceTotal).toFixed(2)>=0.01){
+          this.$message.error('总额与实际不符')
+        }
+        else {
+          var combinedData = this.form.model.invoiceOuts.filter(function (invoice){
+            return invoice.outInvoicePeriod===item.outInvoicePeriod
+          })
+          var resultList = {
+            "amount":item.amount,
+            "taxRate":item.inputTaxRate,
+            "taxAmount":item.taxAmount,
+            "taxPriceTotal":item.taxPriceTotal
           }
-        })
-      }
+          item.resultList = resultList
+          item.combinedData  = combinedData
+          this.$api.supplier.procurement.finance.consignmentInvoicing.consignmentCombined(item).then(res => {
+            if (res.code === 200){
+              this.$parent.doSearch()
+              this.combinedTicket.isCombined = false
+            } else {
+              this.$message.error(res.code + ':' + res.msg)
+            }
+          })
+        }
+      })
+
+
     },
     beforeClose() {
       this.combinedTicket.isCombined = false
