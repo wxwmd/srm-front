@@ -123,16 +123,11 @@ export default {
       this.combinedTicket.combinedList.forEach(item => {
         this.idList.push(item.id)
         this.form.model.invoiceOuts.push(item)
-        console.log(item)
       })
 
       //计算选中数据的总额
       this.$api.supplier.procurement.finance.consignmentInvoicing.getTotal({ids: this.idList}).then(res => {
         if (res.code === 200){
-          // this.form.model.resultList.truthAmount = res.data[0]
-          // this.form.model.resultList.truthTaxAmount = res.data[1]
-          // this.form.model.resultList.truthTaxPriceTotal = res.data[2]
-          // this.form.model.resultList.truthTaxRate=res.data[3]
           this.form.model.resultList = res.data
         } else {
           this.$message.error(res.code + ':' + res.msg)
@@ -140,30 +135,61 @@ export default {
       })
     },
     save(formName){
-      this.form.model.resultList.forEach(item=>{
-        console.log(formName)
+      console.log(formName)
+      // 先进行校验，校验成功才能开票
+      var valid = true
+      for (var i=0;i<this.form.model.resultList.length;i++){
+        var item = this.form.model.resultList[i]
         if (item.invoiceCode==null || item.invoiceCode===''){
-          this.$message.error('发票代码不能为空')
+          this.$message.error('第'+(i+1)+'张发票：发票代码不能为空')
+          valid = false
+          break
         } else if (item.invoiceNumber==null || item.invoiceNumber===''){
-          this.$message.error('发票号码不能为空')
+          this.$message.error('第'+(i+1)+'张发票：发票号码不能为空')
+          valid = false
+          break
         } else if (item.invoiceDate==null || item.invoiceDate===''){
-          this.$message.error('发票日期不能为空')
+          this.$message.error('第'+(i+1)+'张发票：发票日期不能为空')
+          valid = false
+          break
         } else if (item.inputAmount==null || item.inputAmount===''){
-          this.$message.error('不含税金额不能为空')
+          this.$message.error('第'+(i+1)+'张发票：不含税金额不能为空')
+          valid = false
+          break
         } else if (item.inputTaxRate==null || item.inputTaxRate===''){
-          this.$message.error('税率不能为空')
+          this.$message.error('第'+(i+1)+'张发票：税率不能为空')
+          valid = false
+          break
         } else if (item.inputTaxAmount==null || item.inputTaxAmount===''){
-          this.$message.error('税额不能为空')
+          this.$message.error('第'+(i+1)+'张发票：税额不能为空')
+          valid = false
+          break
         } else if (item.inputTaxPriceTotal==null || item.inputTaxPriceTotal===''){
-          this.$message.error('税价合计不能为空')
+          this.$message.error('第'+(i+1)+'张发票：税价合计不能为空')
+          valid = false
+          break
         } else if (Math.abs(item.amount-item.inputAmount).toFixed(2)>=0.01){
-          this.$message.error('不含税金额与实际不符')
+          this.$message.error('第'+(i+1)+'张发票：不含税金额与实际不符')
+          valid = false
+          break
         } else if (Math.abs(item.taxAmount-item.inputTaxAmount).toFixed(2)>=0.01){
-          this.$message.error('税额与实际不符')
+          this.$message.error('第'+(i+1)+'张发票：税额与实际不符')
+          valid = false
+          break
         } else if (Math.abs(item.taxPriceTotal-item.inputTaxPriceTotal).toFixed(2)>=0.01){
-          this.$message.error('总额与实际不符')
+          this.$message.error('第'+(i+1)+'张发票：税价合计与实际不符')
+          valid = false
+          break
         }
-        else {
+      }
+
+
+      if (valid){
+        var hasExecuted = 0;
+        var success = 0;
+        var fail = 0;
+        for (i=0;i<this.form.model.resultList.length;i++){
+          item = this.form.model.resultList[i]
           var combinedData = this.form.model.invoiceOuts.filter(function (invoice){
             return invoice.outInvoicePeriod===item.outInvoicePeriod
           })
@@ -175,18 +201,27 @@ export default {
           }
           item.resultList = resultList
           item.combinedData  = combinedData
+
           this.$api.supplier.procurement.finance.consignmentInvoicing.consignmentCombined(item).then(res => {
+            hasExecuted+=1
             if (res.code === 200){
+              success=success+1
+            } else {
+              fail=fail+1
+            }
+            // 全部执行完了
+            if (hasExecuted === this.form.model.resultList.length){
               this.$parent.doSearch()
               this.combinedTicket.isCombined = false
-            } else {
-              this.$message.error(res.code + ':' + res.msg)
+              if (fail!==0){
+                this.$message.error('开票失败，成功开票'+success+'个，失败开票个数：'+fail+'个')
+              } else{
+                this.$message.success('开票成功，成功开票'+success+'个')
+              }
             }
           })
         }
-      })
-
-
+      }
     },
     beforeClose() {
       this.combinedTicket.isCombined = false

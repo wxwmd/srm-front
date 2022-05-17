@@ -32,25 +32,16 @@
                 @row-dblclick="detail"
                 style="width:100%">
         <el-table-column type="index" width="50"/>
-<!--        <el-table-column prop="supplierCode" v-if="this.$store.state.user.type !== 1" label="供应商编码" width="150"/>-->
-<!--        <el-table-column prop="invoiceCode" label="发票代码"/>-->
-<!--        <el-table-column prop="invoiceNumber" label="发票号"/>-->
-<!--        <el-table-column prop="invoiceDate" label="发票日期"/>-->
-<!--        <el-table-column prop="amount" label="不含税金额"/>-->
-<!--        <el-table-column prop="taxAmount" label="税额"/>-->
-<!--        <el-table-column prop="taxRate" label="税率（%）"/>-->
-<!--        <el-table-column prop="taxPriceTotal" label="税价合计"/>-->
-<!--        <el-table-column prop="outInvoicePeriod" label="开票区间"/>-->
-        <el-table-column prop="supplierCode" label="供应商编码" width="150"/>
+        <el-table-column prop="supplierCode" label="供应商编码" width="100"/>
         <el-table-column prop="supplierName" label="供应商名称" width="150"/>
-        <el-table-column prop="invoiceCode" label="发票代码"/>
-        <el-table-column prop="invoiceNumber" label="发票号码"/>
-        <el-table-column prop="invoiceDate" label="发票日期"/>
-        <el-table-column prop="amount" label="不含税金额"/>
-        <el-table-column prop="taxAmount" label="税额"/>
-        <el-table-column prop="taxRate" label="税率（%）"/>
-        <el-table-column prop="taxPriceTotal" label="税价合计"/>
-        <el-table-column prop="outInvoicePeriod" label="发票期间"/>
+        <el-table-column prop="invoiceCode" label="发票代码" width="150"/>
+        <el-table-column prop="invoiceNumber" label="发票号码" width="150"/>
+        <el-table-column prop="invoiceDate" label="发票日期" width="150"/>
+        <el-table-column prop="amount" label="不含税金额" width="100"/>
+        <el-table-column prop="taxAmount" label="税额"  width="100"/>
+        <el-table-column prop="taxRate" label="税率（%）" width="100"/>
+        <el-table-column prop="taxPriceTotal" label="税价合计" width="100"/>
+        <el-table-column prop="outInvoicePeriod" label="发票期间" width="200"/>
 
         <el-table-column prop="invoiceStatus" label="状态">
           <template slot-scope="scope">
