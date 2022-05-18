@@ -93,16 +93,16 @@
           </el-form-item>
           <el-form-item class="jz-from-flex" label-width="0">
             <el-form-item label="不含税总金额" prop="aggregateAmount" style="width: 25%">
-              <el-input class="jz-input" v-model="form.model.amount"/>
+              <el-input class="jz-input" v-model="form.model.amount" disabled/>
             </el-form-item>
             <el-form-item label="税率（%）" prop="taxRate" style="width: 25%">
-              <el-input class="jz-input" @change="calculate()" v-model="form.model.taxRate"/>
+              <el-input class="jz-input" @change="calculate()" v-model="form.model.taxRate" disabled/>
             </el-form-item>
             <el-form-item label="税额" prop="taxAmount" style="width: 25%">
-              <el-input class="jz-input" @change="calculate()" v-model="form.model.taxAmount"/>
+              <el-input class="jz-input" @change="calculate()" v-model="form.model.taxAmount" disabled/>
             </el-form-item>
             <el-form-item label="税价合计" prop="taxPriceTotal" style="width: 25%">
-              <el-input class="jz-input" v-model="form.model.taxPriceTotal"/>
+              <el-input class="jz-input" v-model="form.model.taxPriceTotal" disabled/>
             </el-form-item>
           </el-form-item>
 <!--          <el-form-item label="折扣原因" prop="discountCause" style="width: 50%">-->

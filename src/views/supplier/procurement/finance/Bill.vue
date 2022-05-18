@@ -83,8 +83,6 @@
               <el-input class="jz-input" v-model="form.model.interimInvoiceNumber" disabled/>
             </el-form-item>
 
-
-
             <el-form-item label="发票号" prop="invoiceNumber" style="width: 50%">
               <el-input class="jz-input" v-model="form.model.invoiceNumber"/>
             </el-form-item>
@@ -102,25 +100,26 @@
               </el-date-picker>
             </el-form-item>
           </el-form-item>
+
           <el-form-item class="jz-from-flex" label-width="0">
             <el-form-item label="不含税总金额" prop="withoutTaxAmount" style="width: 25%">
-              <el-input class="jz-input" v-model="form.model.withoutTaxAmount"/>
+              <el-input class="jz-input" v-model="form.model.withoutTaxAmount" disabled/>
             </el-form-item>
+
             <el-form-item label="税率" prop="taxRate" style="width: 25%">
-              <el-input class="jz-input" v-model="form.model.taxRate" >
+              <el-input class="jz-input" v-model="form.model.taxRate" disabled>
                 <template slot="append" >%</template>
               </el-input>
             </el-form-item>
+
             <el-form-item label="税额" prop="taxAmount" style="width: 25%">
-              <el-input class="jz-input" v-model="form.model.taxAmount"/>
+              <el-input class="jz-input" v-model="form.model.taxAmount" disabled/>
             </el-form-item>
+
             <el-form-item label="税价合计" prop="totalAmount" style="width: 25%">
-              <el-input class="jz-input" v-model="form.model.totalAmount"/>
+              <el-input class="jz-input" v-model="form.model.totalAmount" disabled/>
             </el-form-item>
           </el-form-item>
-<!--          <el-form-item label="折扣原因" prop="discountCause" style="width: 50%">-->
-<!--            <el-input class="jz-input" v-model="form.model.discountCause"/>-->
-<!--          </el-form-item>-->
         </el-form>
         <div class="jz-form-btn" v-if="!form.check">
           <el-button type="primary" plain @click="save('form')">提 交</el-button>
@@ -172,18 +171,18 @@ export default {
           invoiceDate: [
             {required: true, message: '开票日期不能为空', trigger: 'blur'}
           ],
-          withoutTaxAmount: [
-            {required: true, message: '不含税金额不能为空', trigger: 'blur'}
-          ],
-          taxRate: [
-            {required: true, message: '税率不能为空', trigger: 'blur'}
-          ],
-          taxAmount: [
-            {required: true, message: '税额不能为空', trigger: 'blur'}
-          ],
-          totalAmount: [
-            {required: true, message: '税价合计不能为空', trigger: 'blur'}
-          ]
+          // withoutTaxAmount: [
+          //   {required: true, message: '不含税金额不能为空', trigger: 'blur'}
+          // ],
+          // taxRate: [
+          //   {required: true, message: '税率不能为空', trigger: 'blur'}
+          // ],
+          // taxAmount: [
+          //   {required: true, message: '税额不能为空', trigger: 'blur'}
+          // ],
+          // totalAmount: [
+          //   {required: true, message: '税价合计不能为空', trigger: 'blur'}
+          // ]
         }
       },
       tableUtil: {},

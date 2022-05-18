@@ -6,23 +6,12 @@
     <div class="jz-module-toolbar">
       <div>
         <el-input class="jz-input" size="mini" clearable v-if="this.$store.state.user.type !== 1" v-model="tableUtil.filter.supplierCode" placeholder="供应商编码"/>
-<!--        <el-date-picker-->
-<!--          size="mini"-->
-<!--          v-model="value1"-->
-<!--          value-format="yyyy-MM-dd"-->
-<!--          type="daterange"-->
-<!--          @change="changeTime"-->
-<!--          range-separator="至"-->
-<!--          start-placeholder="开始日期"-->
-<!--          end-placeholder="结束日期">-->
-<!--        </el-date-picker>-->
         <el-input class="jz-input" size="mini" clearable v-model="tableUtil.filter.plant" placeholder="工厂"/>
+        <el-input class="jz-input" size="mini" clearable v-model="tableUtil.filter.purchaseOrder" placeholder="采购订单号"/>
         <button class="jz-btn" @click="doSearch()">查询</button>
       </div>
       <div v-if="type === 1">
         <el-button type="primary" plain @click="exportData()">导出</el-button>
-<!--&lt;!&ndash;        <el-button type="primary" plain @click="verify()">验证</el-button>&ndash;&gt;-->
-<!--        <el-button type="primary" plain @click="split()">拆票</el-button>-->
         <el-button type="primary" plain @click="combined()">开票</el-button>
       </div>
     </div>
@@ -40,6 +29,7 @@
                 ref="multipleTable"
                 :row-key="getRowId"
                 style="width:100%"
+                :cell-style="cellStyle"
                 @row-click="clickData">
 <!--        <el-table-column v-if="type === 1" type="selection" :reserve-selection="true" width="55"/>-->
         <el-table-column :selectable="checkFreezeNum"  type="selection" :reserve-selection="true" width="55"></el-table-column>
@@ -55,7 +45,7 @@
         <el-table-column prop="materialVoucher" label="物料凭证"/>
         <el-table-column prop="voucherProject" label="凭证项目"/>
         <el-table-column prop="notOutInvoiceNumber" label="未开票数量" width="90"/>
-        <el-table-column prop="freezeNumber" label="冻结数量"/>
+        <el-table-column prop="freezeNumber" label="冻结数量" />
 <!--        <el-table-column prop="status" label="状态">-->
 <!--          <template slot-scope="scope">-->
 <!--            {{scope.row.status === -1 ? "未开票" : (scope.row.status === 0 ? "已开票" : "")}}-->
@@ -122,6 +112,14 @@ export default {
     // Freezenumber为0才可选
     checkFreezeNum (row, index){
       return row.freezeNumber===0;
+    },
+    cellStyle ({ row, column, rowIndex, columnIndex }) {
+      // 状态列字体颜色
+      if (row.freezeNumber!==0&& columnIndex === 11) {
+        return 'color: red'
+      } else {
+        return 'color: #1a1a1b'
+      }
     },
     // changeTime(){
     //   if (this.value1 !== null){
